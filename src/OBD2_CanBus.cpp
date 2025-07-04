@@ -546,10 +546,10 @@ void OBD2_CanBus::debugPrintHexln(byte val) {
 //   _dataRequestInterval = interval;
 // }
 
-// void OBD2_CanBus::setProtocol(const String &protocolName) {
-//   protocol = protocolName;
-//   debugPrintln(("Protocol set to: " + protocol).c_str());
-// }
+void OBD2_CanBus::setProtocol(const String &protocolName) {
+  protocol = protocolName;
+  debugPrintln(("Protocol set to: " + protocol).c_str());
+}
 
 String OBD2_CanBus::decodeDTC(byte input_byte1, byte input_byte2) {
   String ErrorCode = "";

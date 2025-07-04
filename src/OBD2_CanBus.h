@@ -72,7 +72,7 @@ class OBD2_CanBus {
 
   // void setWriteDelay(uint16_t delay);
   // void setDataRequestInterval(uint16_t interval);
-  // void setProtocol(const String &protocolName);
+  void setProtocol(const String &protocolName);
 
  private:
   uint8_t _rxPin;
