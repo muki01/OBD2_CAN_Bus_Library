@@ -45,6 +45,7 @@ class OBD2_CanBus {
 
   void setDebug(Stream &serial);
   bool initOBD2();
+  bool initTWAI();
   bool writeData(byte mode, byte pid);
   bool writeRawData(canMessage msg);
   int readData();

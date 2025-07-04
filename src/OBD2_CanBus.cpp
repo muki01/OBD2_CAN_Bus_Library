@@ -3,28 +3,32 @@
 OBD2_CanBus::OBD2_CanBus(uint8_t rxPin, uint8_t txPin) : _rxPin(rxPin), _txPin(txPin) {
 }
 
-bool OBD2_CanBus::initOBD2() {
-  debugPrintln(F("Initializing TWAI..."));
-  twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)_txPin, (gpio_num_t)_rxPin, TWAI_MODE_NORMAL);
-  twai_timing_config_t t_config = CAN_SPEED;
-  twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();  // Accept all messages
 
-  // Install TWAI driver
-  if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_OK) {
-    debugPrintln(F("TWAI driver installed."));
-  } else {
-    debugPrintln(F("Failed to install TWAI driver!"));
+
+
+
+
+bool OBD2_CanBus::initTWAI() {
+  debugPrintln(F("Setting up TWAI interface..."));
+
+  twai_general_config_t general = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)_txPin, (gpio_num_t)_rxPin, TWAI_MODE_NORMAL);
+  twai_timing_config_t timing = CAN_SPEED;
+  twai_filter_config_t filter = TWAI_FILTER_CONFIG_ACCEPT_ALL();
+
+  if (twai_driver_install(&general, &timing, &filter) != ESP_OK) {
+    debugPrintln(F("❌ Driver installation failed."));
     return false;
   }
 
-  // Start TWAI
-  if (twai_start() == ESP_OK) {
-    debugPrintln(F("TWAI started."));
-    return true;
-  } else {
-    debugPrintln(F("Failed to start TWAI!"));
+  if (twai_start() != ESP_OK) {
+    debugPrintln(F("❌ TWAI start failed."));
     return false;
   }
+
+  debugPrintln(F("✅ TWAI successfully initialized."));
+  return true;
+}
+
 }
 
 bool OBD2_CanBus::writeRawData(canMessage msg) {
