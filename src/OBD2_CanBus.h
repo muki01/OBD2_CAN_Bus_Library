@@ -86,6 +86,8 @@ class OBD2_CanBus {
   bool connectionStatus = false;
 
   String protocol = "Automatic";
+  int CAN_BIT = 11;  // 11-bit veya 29-bit için
+  twai_timing_config_t CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
   uint16_t _writeDelay = 5;
   uint16_t _dataRequestInterval = 60;
   String storedDTCBuffer[32];

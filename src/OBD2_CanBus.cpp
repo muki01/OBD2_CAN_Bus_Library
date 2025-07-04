@@ -3,10 +3,42 @@
 OBD2_CanBus::OBD2_CanBus(uint8_t rxPin, uint8_t txPin) : _rxPin(rxPin), _txPin(txPin) {
 }
 
+bool OBD2_CanBus::initOBD2() {
+  if (protocol == "11b250") {
+    CAN_BIT = 11;
+    CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
+    debugPrintln(F("Protocol set to: 11bit / 250kbps"));
+  } else if (protocol == "29b250") {
+    CAN_BIT = 29;
+    CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
+    debugPrintln(F("Protocol set to: 29bit / 250kbps"));
+  } else if (protocol == "11b500") {
+    CAN_BIT = 11;
+    CAN_SPEED = TWAI_TIMING_CONFIG_500KBITS();
+    debugPrintln(F("Protocol set to: 11bit / 500kbps"));
+  } else if (protocol == "29b500") {
+    CAN_BIT = 29;
+    CAN_SPEED = TWAI_TIMING_CONFIG_500KBITS();
+    debugPrintln(F("Protocol set to: 29bit / 500kbps"));
+  } else {
+    debugPrintln(F("Automatic protocol detection enabled."));
+  }
+
+  if (initTWAI()) {
+    if (writeData(0x01, 0x00)) {
+      if (readData() > 0) {
+        debugPrintln(F("Protocol: 11bit / 250kbps"));
+        return true;
+      }
+    }
+    stopTWAI();
+  }
+
+  debugPrintln(F("No response on any protocol. Retrying..."));
 
 
-
-
+  return false;
+}
 
 bool OBD2_CanBus::initTWAI() {
   debugPrintln(F("Setting up TWAI interface..."));
