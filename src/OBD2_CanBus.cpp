@@ -29,6 +29,10 @@ bool OBD2_CanBus::initTWAI() {
   return true;
 }
 
+void OBD2_CanBus::stopTWAI() {
+  twai_stop();
+  twai_driver_uninstall();
+  delay(100);
 }
 
 bool OBD2_CanBus::writeRawData(canMessage msg) {
