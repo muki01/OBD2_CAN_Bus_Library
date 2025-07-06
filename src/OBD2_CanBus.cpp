@@ -75,6 +75,7 @@ bool OBD2_CanBus::initTWAI() {
 }
 
 void OBD2_CanBus::stopTWAI() {
+  debugPrintln(F("Stopping TWAI..."));
   twai_stop();
   twai_driver_uninstall();
   delay(100);
@@ -109,16 +110,16 @@ bool OBD2_CanBus::writeRawData(canMessage msg) {
   debugPrintln(F(""));
 
   if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK) {
-    debugPrintln(F("CAN message sent successfully."));
+    debugPrintln(F("✅ CAN message sent successfully."));
     return true;
   } else {
-    debugPrintln(F("Error sending CAN message!"));
+    debugPrintln(F("❌ Error sending CAN message!"));
     return false;
   }
 }
 
 bool OBD2_CanBus::writeData(byte mode, byte pid) {
-  debugPrintln(F("Writing Data: "));
+  debugPrintln(F("Sending Data: "));
   twai_message_t message;
   byte quearyLength = 0x02;  // Default query length
 
@@ -168,10 +169,10 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   debugPrintln(F(""));
 
   if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK) {
-    debugPrintln(F("CAN message sent successfully."));
+    debugPrintln(F("✅ CAN message sent successfully."));
     return true;
   } else {
-    debugPrintln(F("Error sending CAN message!"));
+    debugPrintln(F("❌ Error sending CAN message!"));
     return false;
   }
 }
