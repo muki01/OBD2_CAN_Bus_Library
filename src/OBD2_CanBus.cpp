@@ -600,8 +600,8 @@ void OBD2_CanBus::debugPrintHexln(byte val) {
 // }
 
 void OBD2_CanBus::setProtocol(const String &protocolName) {
-  protocol = protocolName;
-  debugPrintln(("Protocol set to: " + protocol).c_str());
+  selectedProtocol = protocolName;
+  debugPrintln(("Protocol set to: " + selectedProtocol).c_str());
 }
 
 String OBD2_CanBus::decodeDTC(byte input_byte1, byte input_byte2) {

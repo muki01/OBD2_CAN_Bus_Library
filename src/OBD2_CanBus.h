@@ -5,8 +5,6 @@
 #include <driver/twai.h>
 
 // #include "VehicleData.h"
-#define CAN_SPEED TWAI_TIMING_CONFIG_500KBITS()  // CAN SPEED 125KBITS, 250KBITS, 500KBITS or 1MBITS
-#define CAN_BIT 29                               // 11BIT or 29BIT
 
 // ==== OBD2 Mods ====
 const byte init_OBD = 0x81;              // Init ISO14230
@@ -86,7 +84,8 @@ class OBD2_CanBus {
   int errors = 0;
   bool connectionStatus = false;
 
-  String protocol = "Automatic";
+  String selectedProtocol = "Automatic";
+  String connectedProtocol = "";
   int CAN_BIT = 11;  // 11-bit veya 29-bit için
   twai_timing_config_t CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
   uint16_t _writeDelay = 5;
