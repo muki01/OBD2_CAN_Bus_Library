@@ -4,38 +4,38 @@ OBD2_CanBus::OBD2_CanBus(uint8_t rxPin, uint8_t txPin) : _rxPin(rxPin), _txPin(t
 }
 
 bool OBD2_CanBus::initOBD2() {
-  if (protocol == "11b250") {
-    CAN_BIT = 11;
-    CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
-    debugPrintln(F("Protocol set to: 11bit / 250kbps"));
-  } else if (protocol == "29b250") {
-    CAN_BIT = 29;
-    CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
-    debugPrintln(F("Protocol set to: 29bit / 250kbps"));
-  } else if (protocol == "11b500") {
-    CAN_BIT = 11;
-    CAN_SPEED = TWAI_TIMING_CONFIG_500KBITS();
-    debugPrintln(F("Protocol set to: 11bit / 500kbps"));
-  } else if (protocol == "29b500") {
-    CAN_BIT = 29;
-    CAN_SPEED = TWAI_TIMING_CONFIG_500KBITS();
-    debugPrintln(F("Protocol set to: 29bit / 500kbps"));
-  } else {
-    debugPrintln(F("Automatic protocol detection enabled."));
-  }
+  if (connectionStatus) return true;
 
-  if (initTWAI()) {
-    if (writeData(0x01, 0x00)) {
-      if (readData() > 0) {
-        debugPrintln(F("Protocol: 11bit / 250kbps"));
+  debugPrintln(F("Initializing OBD2..."));
+  struct ProtocolOption {
+    const char *name;
+    int bit;
+    twai_timing_config_t speed;
+  };
+
+  ProtocolOption options[] = {{"11b250", 11, TWAI_TIMING_CONFIG_250KBITS()},
+                              {"29b250", 29, TWAI_TIMING_CONFIG_250KBITS()},
+                              {"11b500", 11, TWAI_TIMING_CONFIG_500KBITS()},
+                              {"29b500", 29, TWAI_TIMING_CONFIG_500KBITS()}};
+
+  for (auto &opt : options) {
+    if (selectedProtocol == opt.name || selectedProtocol == "Automatic") {
+      CAN_BIT = opt.bit;
+      CAN_SPEED = opt.speed;
+      debugPrint(F("Trying protocol: "));
+      debugPrintln(opt.name);
+      if (testConnection()) {
+        connectionStatus = true;
+        connectedProtocol = opt.name;
+        debugPrintln(F("✅ OBD2 connection established with protocol: "));
+        debugPrintln(opt.name);
         return true;
+      } else {
+        debugPrint(F("❌ Failed to connect with protocol: "));
+        debugPrintln(opt.name);
       }
     }
-    stopTWAI();
   }
-
-  debugPrintln(F("No response on any protocol. Retrying..."));
-
 
   return false;
 }
