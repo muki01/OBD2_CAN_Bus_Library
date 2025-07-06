@@ -181,9 +181,10 @@ int OBD2_CanBus::readData() {
   twai_message_t response;
   unsigned long start_time = millis();
 
-  while (millis() - start_time < 2000) {
-    if (twai_receive(&response, pdMS_TO_TICKS(2000)) == ESP_OK) {
+  while (millis() - start_time < 500) {
+    if (twai_receive(&response, pdMS_TO_TICKS(500)) == ESP_OK) {
       if (response.identifier == 0x18DAF110 || response.identifier == 0x18DAF111 || response.identifier == 0x7E8) {
+        errors = 0;
         if (memcmp(&resultBuffer, &response, sizeof(twai_message_t)) != 0) {
           memcpy(&resultBuffer, &response, sizeof(twai_message_t));
         }
@@ -210,6 +211,13 @@ int OBD2_CanBus::readData() {
     }
   }
   debugPrintln(F("OBD2 Timeout!"));
+  errors++;
+  if (errors > 2) {
+    errors = 0;
+    if (connectionStatus) {
+      connectionStatus = false;
+    }
+  }
   return 0;
 }
 
