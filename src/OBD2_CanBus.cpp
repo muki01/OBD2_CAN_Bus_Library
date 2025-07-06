@@ -40,6 +40,19 @@ bool OBD2_CanBus::initOBD2() {
   return false;
 }
 
+bool OBD2_CanBus::testConnection() {
+  debugPrintln(F("Testing OBD2 connection..."));
+  if (initTWAI()) {
+    if (writeData(0x01, 0x00)) {
+      if (readData() > 0) {
+        return true;
+      }
+    }
+    stopTWAI();
+  }
+  return false;
+}
+
 bool OBD2_CanBus::initTWAI() {
   debugPrintln(F("Setting up TWAI interface..."));
 
