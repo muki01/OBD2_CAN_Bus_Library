@@ -20,19 +20,22 @@ Before using this library, it's important to confirm whether your vehicle suppor
 Can Bus vehicles typically have **Pin 6 and Pin 14** on the OBD-II connector connected.
 If your vehicle’s OBD-II connector has **Pins 7 connected**, it uses the **K-Line** protocol instead of Can Bus.
 
-✅ **Pin 6 and 14 (CAN bus)**: Your vehicle uses CAN — this library will work.
+✅ **Pin 6 and 14 (CAN bus)**: Your vehicle uses CAN — this library will work.  
 ❌ **Pin 7 (K-Line)**: Your vehicle likely supports ISO 9141 or ISO 14230 (KWP2000) — consider a different library.  
 
 
 ### Example photos of OBD2 Connector
-*(add images or links if available)*
+<img src="https://github.com/user-attachments/assets/12958266-43fc-4c69-9f73-6e7ad105f0df" width=40%>
+<img src="https://github.com/user-attachments/assets/ad60c18e-993b-4151-afb5-1ee8b90c4b35" width=40%>
+
+In the first image, the OBD2 socket includes pin 7, which indicates it operates using the K-Line protocol.
+In the second image, pins 6 and 14 are present, meaning it uses the CAN Bus protocol.
 
 ---
 
 ## ✨ Features
 
-- Supports **ISO 9141-2** and **ISO 14230-4 (KWP2000)**
-- **5-baud initialization (slow init)** and **Fast init** support
+- Supports **11BIT** and **29BIT**, **250KBPS** and **500KBPS**
 - **Automatic protocol detection**
 - Read real-time sensor values
 - Read and clear **stored and pending DTCs**
@@ -40,7 +43,7 @@ If your vehicle’s OBD-II connector has **Pins 7 connected**, it uses the **K-L
 - **Mode 06** support (on-board test results)
 - Debug output for easier development
 - Customizable delays and request intervals
-- Works with Arduino, ESP32 and similar platforms
+- Works with ESP32 and similar platforms
 
 ---
 
@@ -65,8 +68,8 @@ Each protocol has its own timing characteristics, which affect how many response
 
 | Protocol     | Average Responses per Second |
 |--------------|-------------------------------|
-| ISO 9141-2   | ~7–8 responses/sec            |
-| ISO 14230-4  | ~8–9 responses/sec            |
+| 250KBPS      |  Not Tested                   |
+| 500KBPS      | ~100 responses/sec            |
 
 > 🔎 Note: Tese values represent average conditions based on real-world testing. The actual throughput can vary depending on the ECU’s internal processing time, the specific data being requested (e.g. PID type), and system latency.
 
@@ -74,20 +77,6 @@ Each protocol has its own timing characteristics, which affect how many response
 
 ## 🛠️ Schematics for Communication
 
-These schematics are essential because K-Line communication operates at different voltage and signal levels than microcontroller pins.  
-The circuits ensure proper level shifting and protection for safe, stable operation.
-
-You can choose one of the following approaches depending on your project:
-
-### 🔹 Schematic with Transistors
-<img src="https://github.com/muki01/OBD2_K-line_Reader/blob/main/Schematics/Transistor%20Schematic.png" width=70%>
-
-- **R6 3kΩ** is for **3.3V MCUs**. Use **5.3kΩ** for **5V** systems.
-- **R4** is often used as **1kΩ**, but the K-Line standard recommends **510Ω**. Either option will work, but **510Ω** is more compliant with the standard.
-
-### 🔹 Schematic with L9637D
-<img src="https://github.com/muki01/OBD2_K-line_Reader/blob/main/Schematics/L9637D.png" width=70%>
-
-The **L9637D** is a dedicated K-Line transceiver chip that simplifies the interface circuit, reducing part count and improving signal reliability.
+<img src="https://github.com/user-attachments/assets/3fdc245d-841e-4733-b52c-21789ddfdf5e" width=70%>
 
 ---
