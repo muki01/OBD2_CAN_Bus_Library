@@ -25,8 +25,10 @@ If your vehicle’s OBD-II connector has **Pins 7 connected**, it uses the **K-L
 
 
 ### Example photos of OBD2 Connector
-<img src="https://github.com/user-attachments/assets/12958266-43fc-4c69-9f73-6e7ad105f0df" width=40%>
-<img src="https://github.com/user-attachments/assets/ad60c18e-993b-4151-afb5-1ee8b90c4b35" width=40%>
+<p>
+<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20KLine.jpg" width=40%>
+<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20CanBus.jpg" width=40%>
+</p>
 
 In the first image, the OBD2 socket includes pin 7, which indicates it operates using the K-Line protocol.
 In the second image, pins 6 and 14 are present, meaning it uses the CAN Bus protocol.
@@ -77,6 +79,6 @@ Each protocol has its own timing characteristics, which affect how many response
 
 ## 🛠️ Schematics for Communication
 
-<img src="https://github.com/user-attachments/assets/3fdc245d-841e-4733-b52c-21789ddfdf5e" width=70%>
+<img src="https://github.com/muki01/OBD2_CAN_Bus_Library/blob/main/images/TJA1050%20Schematic.png" width=70%>
 
 ---
