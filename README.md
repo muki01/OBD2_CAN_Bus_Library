@@ -1,10 +1,10 @@
 # OBD2 CanBus Library
 
-<!-- ![GitHub forks](https://img.shields.io/github/forks/muki01/OBD2_KLine_Library?style=flat)
-![GitHub Repo stars](https://img.shields.io/github/stars/muki01/OBD2_KLine_Library?style=flat)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/muki01/OBD2_KLine_Library?style=flat)
-![GitHub License](https://img.shields.io/github/license/muki01/OBD2_KLine_Library?style=flat)
-![GitHub last commit](https://img.shields.io/github/last-commit/muki01/OBD2_KLine_Library) -->
+![GitHub forks](https://img.shields.io/github/forks/muki01/OBD2_CAN_Bus_Library?style=flat)
+![GitHub Repo stars](https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Library?style=flat)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat)
+![GitHub License](https://img.shields.io/github/license/muki01/OBD2_CAN_Bus_Library?style=flat)
+![GitHub last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library)
 
 **OBD2_CanBus** is a lightweight yet powerful ESP32 compatible library that enables direct communication with vehicles using the **Can Bus**.
 
