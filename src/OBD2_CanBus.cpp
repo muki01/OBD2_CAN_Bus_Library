@@ -57,6 +57,8 @@ bool OBD2_CanBus::initTWAI() {
   debugPrintln(F("Setting up TWAI interface..."));
 
   twai_general_config_t general = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)_txPin, (gpio_num_t)_rxPin, TWAI_MODE_NORMAL);
+  general.rx_queue_len = 60;  // Received messages queue size
+  general.tx_queue_len = 10;  // Transmit messages queue size
   twai_timing_config_t timing = CAN_SPEED;
   twai_filter_config_t filter = TWAI_FILTER_CONFIG_ACCEPT_ALL();
 
