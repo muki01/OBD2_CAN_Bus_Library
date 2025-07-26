@@ -169,7 +169,7 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   debugPrintln(F(""));
 
   if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK) {
-    debugPrintln(F("✅ CAN message sent successfully."));
+    // debugPrintln(F("✅ CAN message sent successfully."));
     return true;
   } else {
     debugPrintln(F("❌ Error sending CAN message!"));
@@ -178,7 +178,7 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
 }
 
 int OBD2_CanBus::readData() {
-  debugPrintln(F("Reading..."));
+  // debugPrintln(F("Reading..."));
   twai_message_t response;
   unsigned long start_time = millis();
 
