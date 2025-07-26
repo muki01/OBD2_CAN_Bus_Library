@@ -112,7 +112,7 @@ bool OBD2_CanBus::writeRawData(canMessage msg) {
   debugPrintln(F(""));
 
   if (twai_transmit(&message, pdMS_TO_TICKS(1000)) == ESP_OK) {
-    debugPrintln(F("✅ CAN message sent successfully."));
+    // debugPrintln(F("✅ CAN message sent successfully."));
     return true;
   } else {
     debugPrintln(F("❌ Error sending CAN message!"));
@@ -121,7 +121,6 @@ bool OBD2_CanBus::writeRawData(canMessage msg) {
 }
 
 bool OBD2_CanBus::writeData(byte mode, byte pid) {
-  debugPrintln(F("Sending Data: "));
   twai_message_t message;
   byte quearyLength = 0x02;  // Default query length
 
@@ -155,6 +154,7 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   message.data[6] = 0x00;
   message.data[7] = 0x00;
 
+  debugPrint(F("Sending Data: "));
   debugPrint(F("ID: 0x"));
   debugPrintHex(message.identifier);
   // debugPrint(F(" RTR: "));
@@ -192,8 +192,7 @@ int OBD2_CanBus::readData() {
           memcpy(&resultBuffer, &response, sizeof(twai_message_t));
         }
 
-        debugPrint(F("Received Data: "));
-        debugPrint(F("ID: 0x"));
+        debugPrint(F("✅ Received Data: ID: 0x"));
         debugPrintHex(response.identifier);
         // debugPrint(F(", RTR: "));
         // debugPrintHex(response.rtr);
@@ -210,10 +209,10 @@ int OBD2_CanBus::readData() {
         return response.data_length_code;
       }
     } else {
-      debugPrintln(F("Not Received any Message!"));
+      debugPrintln(F("❌ Not Received any Message!"));
     }
   }
-  debugPrintln(F("OBD2 Timeout!"));
+  debugPrintln(F("❌ OBD2 Timeout!"));
   errors++;
   if (errors > 2) {
     errors = 0;
