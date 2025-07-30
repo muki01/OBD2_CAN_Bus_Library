@@ -187,7 +187,7 @@ int OBD2_CanBus::readData() {
   while (millis() - start_time < 500) {
     if (twai_receive(&response, pdMS_TO_TICKS(500)) == ESP_OK) {
       if (response.identifier == 0x18DAF110 || response.identifier == 0x18DAF111 || response.identifier == 0x7E8) {
-        errors = 0;
+        updateConnectionStatus(true);
         if (memcmp(&resultBuffer, &response, sizeof(twai_message_t)) != 0) {
           memcpy(&resultBuffer, &response, sizeof(twai_message_t));
         }
@@ -213,13 +213,7 @@ int OBD2_CanBus::readData() {
     }
   }
   debugPrintln(F("❌ OBD2 Timeout!"));
-  errors++;
-  if (errors > 2) {
-    errors = 0;
-    if (connectionStatus) {
-      connectionStatus = false;
-    }
-  }
+  updateConnectionStatus(false);
   return 0;
 }
 
@@ -657,3 +651,23 @@ bool OBD2_CanBus::isInArray(const byte *dataArray, int length, byte value) {
 //   hexString.toUpperCase();
 //   return hexString;
 // }
+
+void OBD2_CanBus::updateConnectionStatus(bool messageReceived) {
+  if (messageReceived) {
+    errors = 0;
+    // if (!connectionStatus) {
+    //   connectionStatus = true;
+    //   debugPrintln(F("✅ Connection established."));
+    // }
+  } else {
+    errors++;
+    debugPrint(F("⚠️ Not received data, error count: "));
+    debugPrintln(String(errors).c_str());
+    if (errors > 2 && connectionStatus) {
+      stopTWAI();
+      connectionStatus = false;
+      errors = 0;
+      debugPrintln(F("⛔ Connection lost."));
+    }
+  }
+}

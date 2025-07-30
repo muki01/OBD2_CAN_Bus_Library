@@ -75,6 +75,8 @@ class OBD2_CanBus {
   // void setDataRequestInterval(uint16_t interval);
   void setProtocol(const String &protocolName);
 
+  void updateConnectionStatus(bool messageReceived);
+
  private:
   uint8_t _rxPin;
   uint8_t _txPin;
