@@ -29,10 +29,12 @@ bool OBD2_CanBus::initOBD2() {
         connectedProtocol = opt.name;
         debugPrintln(F("✅ OBD2 connection established with protocol: "));
         debugPrintln(opt.name);
+        debugPrintln(F(""));
         return true;
       } else {
         debugPrint(F("❌ Failed to connect with protocol: "));
         debugPrintln(opt.name);
+        debugPrintln(F(""));
       }
     }
   }
@@ -41,7 +43,6 @@ bool OBD2_CanBus::initOBD2() {
 }
 
 bool OBD2_CanBus::testConnection() {
-  debugPrintln(F("Testing OBD2 connection..."));
   if (initTWAI()) {
     if (writeData(0x01, 0x00)) {
       if (readData() > 0) {
@@ -154,8 +155,7 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   message.data[6] = 0x00;
   message.data[7] = 0x00;
 
-  debugPrint(F("Sending Data: "));
-  debugPrint(F("ID: 0x"));
+  debugPrint(F("Sending Data: ID: 0x"));
   debugPrintHex(message.identifier);
   // debugPrint(F(" RTR: "));
   // debugPrintHex(message.rtr);
