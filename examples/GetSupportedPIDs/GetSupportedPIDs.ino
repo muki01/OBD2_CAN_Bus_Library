@@ -3,13 +3,13 @@
 OBD2_CanBus CanBus(12, 13);  // RX, TX
 
 void setup() {
-  Serial.begin(115200);  // Start the default serial (for logging/debugging)
+  Serial.begin(1000000);  // Start the default serial (for logging/debugging)
   Serial.println("OBD2 CanBus Get Supported PIDs Example");
 
-  CanBus.setDebug(Serial);       // Enable debug messages on the Serial monitor
-  CanBus.setProtocol("29b500");  // Set communication protocol to 29 BIT 500 KBPS
-  // CanBus.setWriteDelay(5);
-  // CanBus.setDataRequestInterval(60);
+  CanBus.setDebug(Serial);          // Enable debug messages on the Serial monitor
+  CanBus.setProtocol("Automatic");  // Default protocol Automatic
+  //CanBus.setWriteDelay(5);
+  //CanBus.setDataRequestInterval(60);
 
   Serial.println("OBD2 Starting.");
 }
