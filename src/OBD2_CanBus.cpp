@@ -9,7 +9,7 @@ bool OBD2_CanBus::initOBD2() {
   debugPrintln(F("Initializing OBD2..."));
   struct ProtocolOption {
     const char *name;
-    int bit;
+    uint8_t bit;
     twai_timing_config_t speed;
   };
 
@@ -120,9 +120,9 @@ bool OBD2_CanBus::writeRawData(canMessage msg) {
   }
 }
 
-bool OBD2_CanBus::writeData(byte mode, byte pid) {
+bool OBD2_CanBus::writeData(uint8_t mode, uint8_t pid) {
   twai_message_t message;
-  byte quearyLength = 0x02;  // Default query length
+  uint8_t quearyLength = 0x02;  // Default query length
 
   if (mode == read_storedDTCs || mode == read_pendingDTCs || mode == clear_DTCs) {
     quearyLength = 0x01;
@@ -144,7 +144,7 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   }
 
   message.rtr = 0;                 // Data frame
-  message.data_length_code = 8;    // 8-byte data frame
+  message.data_length_code = 8;    // 8_byte data frame
   message.data[0] = quearyLength;  // Query length
   message.data[1] = mode;          // Mode
   message.data[2] = pid;           // PID
@@ -178,13 +178,13 @@ bool OBD2_CanBus::writeData(byte mode, byte pid) {
   }
 }
 
-int OBD2_CanBus::readData() {
+uint8_t OBD2_CanBus::readData() {
   // debugPrintln(F("Reading..."));
   twai_message_t response;
   unsigned long start_time = millis();
 
-  while (millis() - start_time < 500) {
-    if (twai_receive(&response, pdMS_TO_TICKS(500)) == ESP_OK) {
+  while (millis() - start_time < _readTimeout) {
+    if (twai_receive(&response, pdMS_TO_TICKS(_readTimeout)) == ESP_OK) {
       if (response.identifier == 0x18DAF110 || response.identifier == 0x18DAF111 || response.identifier == 0x7E8) {
         updateConnectionStatus(true);
         if (memcmp(&resultBuffer, &response, sizeof(twai_message_t)) != 0) {
@@ -216,7 +216,7 @@ int OBD2_CanBus::readData() {
   return 0;
 }
 
-float OBD2_CanBus::getPID(byte mode, byte pid) {
+float OBD2_CanBus::getPID(uint8_t mode, uint8_t pid) {
   writeData(mode, pid);
 
   int len = readData();
@@ -228,7 +228,7 @@ float OBD2_CanBus::getPID(byte mode, byte pid) {
     return -2;  // Unexpected PID
   }
 
-  byte A = 0, B = 0, C = 0, D = 0;
+  uint8_t A = 0, B = 0, C = 0, D = 0;
 
   if (mode == read_LiveData) {
     int dataBytesLen = len - 3;
@@ -341,15 +341,55 @@ float OBD2_CanBus::getPID(byte mode, byte pid) {
   }
 }
 
-float OBD2_CanBus::getLiveData(byte pid) {
+bool OBD2_CanBus::readAndCompareData(const canMessage &target) {
+  // debugPrintln(F("Reading All..."));
+  twai_message_t response;
+  unsigned long start_time = millis();
+
+  while (millis() - start_time < _readTimeout) {
+    if (twai_receive(&response, pdMS_TO_TICKS(_readTimeout)) == ESP_OK) {
+      debugPrint(F("Received Data: ID: 0x"));
+      debugPrintHex(response.identifier);
+      debugPrint(F(", Data: "));
+      for (int i = 0; i < response.data_length_code; i++) {
+        debugPrintHex(response.data[i]);
+        debugPrint(F(" "));
+      }
+      debugPrintln(F(""));
+
+      if (response.identifier == target.id && response.rtr == target.rtr && response.extd == target.ide &&
+          response.data_length_code == target.length) {
+        bool match = true;
+        for (int i = 0; i < target.length; i++) {
+          if (response.data[i] != target.data[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          debugPrintln(F("✅ Matching message found."));
+          return true;
+        }
+      }
+
+    } else {
+      debugPrintln(F("❌ Not Received any Message!"));
+    }
+  }
+
+  debugPrintln(F("⛔ Message did not match, timeout."));
+  return false;
+}
+
+float OBD2_CanBus::getLiveData(uint8_t pid) {
   return getPID(read_LiveData, pid);
 }
 
-float OBD2_CanBus::getFreezeFrame(byte pid) {
+float OBD2_CanBus::getFreezeFrame(uint8_t pid) {
   return getPID(read_FreezeFrame, pid);
 }
 
-int OBD2_CanBus::readDTCs(byte mode) {
+uint8_t OBD2_CanBus::readDTCs(uint8_t mode) {
   // Request: C2 33 F1 03 F3
   // example Response: 87 F1 11 43 01 70 01 34 00 00 72
   // example Response: 87 F1 11 43 00 00 72
@@ -369,8 +409,8 @@ int OBD2_CanBus::readDTCs(byte mode) {
   int len = readData();
   if (len >= 3) {
     for (int i = 0; i < len; i += 2) {
-      byte b1 = resultBuffer.data[3 + i * 2];
-      byte b2 = resultBuffer.data[3 + i * 2 + 1];
+      uint8_t b1 = resultBuffer.data[3 + i * 2];
+      uint8_t b2 = resultBuffer.data[3 + i * 2 + 1];
 
       if (b1 == 0 && b2 == 0) break;
 
@@ -381,20 +421,20 @@ int OBD2_CanBus::readDTCs(byte mode) {
   return dtcCount;
 }
 
-int OBD2_CanBus::readStoredDTCs() {
+uint8_t OBD2_CanBus::readStoredDTCs() {
   return readDTCs(0x03);
 }
 
-int OBD2_CanBus::readPendingDTCs() {
+uint8_t OBD2_CanBus::readPendingDTCs() {
   return readDTCs(0x07);
 }
 
-String OBD2_CanBus::getStoredDTC(int index) {
+String OBD2_CanBus::getStoredDTC(uint8_t index) {
   if (index >= 0) return storedDTCBuffer[index];
   return "";
 }
 
-String OBD2_CanBus::getPendingDTC(int index) {
+String OBD2_CanBus::getPendingDTC(uint8_t index) {
   if (index >= 0) return pendingDTCBuffer[index];
   return "";
 }
@@ -410,7 +450,7 @@ bool OBD2_CanBus::clearDTC() {
   return false;
 }
 
-// String OBD2_CanBus::getVehicleInfo(byte pid) {
+// String OBD2_CanBus::getVehicleInfo(uint8_t pid) {
 //   // Request: C2 33 F1 09 02 F1
 //   // example Response: 87 F1 11 49 02 01 00 00 00 31 06
 //   //                   87 F1 11 49 02 02 41 31 4A 43 D5
@@ -418,7 +458,7 @@ bool OBD2_CanBus::clearDTC() {
 //   //                   87 F1 11 49 02 04 52 37 32 35 C8
 //   //                   87 F1 11 49 02 05 32 33 36 37 E6
 
-//   byte dataArray[64];
+//   uint8_t dataArray[64];
 //   int messageCount;
 //   int arrayNum = 0;
 
@@ -462,12 +502,12 @@ bool OBD2_CanBus::clearDTC() {
 //   return "";
 // }
 
-int OBD2_CanBus::readSupportedData(byte mode) {
+uint8_t OBD2_CanBus::readSupportedData(uint8_t mode) {
   int supportedCount = 0;
   int pidIndex = 0;
   int startByte = 0;
   int arraySize = 32;  // Size of supported data arrays
-  byte *targetArray = nullptr;
+  uint8_t *targetArray = nullptr;
 
   if (mode == read_LiveData) {
     startByte = 3;
@@ -488,7 +528,7 @@ int OBD2_CanBus::readSupportedData(byte mode) {
   writeData(mode, SUPPORTED_PIDS_1_20);
   if (readData()) {
     for (int i = 0; i < 4; i++) {
-      byte value = resultBuffer.data[i + startByte];
+      uint8_t value = resultBuffer.data[i + startByte];
       for (int bit = 7; bit >= 0; bit--) {
         if ((value >> bit) & 1) {
           targetArray[supportedCount++] = pidIndex + 1;
@@ -502,7 +542,7 @@ int OBD2_CanBus::readSupportedData(byte mode) {
     writeData(mode, SUPPORTED_PIDS_21_40);
     if (readData()) {
       for (int i = 0; i < 4; i++) {
-        byte value = resultBuffer.data[i + startByte];
+        uint8_t value = resultBuffer.data[i + startByte];
         for (int bit = 7; bit >= 0; bit--) {
           if ((value >> bit) & 1) {
             targetArray[supportedCount++] = pidIndex + 1;
@@ -517,7 +557,7 @@ int OBD2_CanBus::readSupportedData(byte mode) {
     writeData(mode, SUPPORTED_PIDS_41_60);
     if (readData()) {
       for (int i = 0; i < 4; i++) {
-        byte value = resultBuffer.data[i + startByte];
+        uint8_t value = resultBuffer.data[i + startByte];
         for (int bit = 7; bit >= 0; bit--) {
           if ((value >> bit) & 1) {
             targetArray[supportedCount++] = pidIndex + 1;
@@ -531,23 +571,23 @@ int OBD2_CanBus::readSupportedData(byte mode) {
   return supportedCount;
 }
 
-int OBD2_CanBus::readSupportedLiveData() {
+uint8_t OBD2_CanBus::readSupportedLiveData() {
   return readSupportedData(read_LiveData);
 }
 
-int OBD2_CanBus::readSupportedFreezeFrame() {
+uint8_t OBD2_CanBus::readSupportedFreezeFrame() {
   return readSupportedData(read_FreezeFrame);
 }
 
-int OBD2_CanBus::readSupportedComponentMonitoring() {
+uint8_t OBD2_CanBus::readSupportedComponentMonitoring() {
   return readSupportedData(component_Monitoring);
 }
 
-int OBD2_CanBus::readSupportedVehicleInfo() {
+uint8_t OBD2_CanBus::readSupportedVehicleInfo() {
   return readSupportedData(read_VehicleInfo);
 }
 
-byte OBD2_CanBus::getSupportedData(byte mode, int index) {
+uint8_t OBD2_CanBus::getSupportedData(uint8_t mode, uint8_t index) {
   if (mode == 0x01) {
     if (index >= 0) return supportedLiveData[index];
   } else if (mode == 0x02) {
@@ -580,34 +620,37 @@ void OBD2_CanBus::debugPrintln(const __FlashStringHelper *msg) {
   if (_debugSerial) _debugSerial->println(msg);
 }
 
-void OBD2_CanBus::debugPrintHex(byte val) {
-  if (_debugSerial) {
-    if (val < 0x10) _debugSerial->print("0");
-    _debugSerial->print(val, HEX);
+void OBD2_CanBus::debugPrintHex(uint32_t val) {
+  if (!_debugSerial) return;
+
+  String hexStr = String(val, HEX);
+  hexStr.toUpperCase();
+
+  // Eğer sadece tek karakterse, başa '0' ekle
+  if (hexStr.length() == 1) {
+    hexStr = "0" + hexStr;
   }
+
+  _debugSerial->print(hexStr.c_str());
 }
 
-void OBD2_CanBus::debugPrintHexln(byte val) {
+void OBD2_CanBus::debugPrintHexln(uint32_t val) {
   if (_debugSerial) {
     debugPrintHex(val);
     _debugSerial->println();
   }
 }
 
-// void OBD2_CanBus::setWriteDelay(uint16_t delay) {
-//   _writeDelay = delay;
-// }
-
-// void OBD2_CanBus::setDataRequestInterval(uint16_t interval) {
-//   _dataRequestInterval = interval;
-// }
+void OBD2_CanBus::setReadTimeout(uint16_t timeoutMs) {
+  _readTimeout = timeoutMs;
+}
 
 void OBD2_CanBus::setProtocol(const String &protocolName) {
   selectedProtocol = protocolName;
   debugPrintln(("Protocol set to: " + selectedProtocol).c_str());
 }
 
-String OBD2_CanBus::decodeDTC(byte input_byte1, byte input_byte2) {
+String OBD2_CanBus::decodeDTC(uint8_t input_byte1, uint8_t input_byte2) {
   String ErrorCode = "";
   const char type_lookup[4] = {'P', 'C', 'B', 'U'};
   const char digit_lookup[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -621,7 +664,7 @@ String OBD2_CanBus::decodeDTC(byte input_byte1, byte input_byte2) {
   return ErrorCode;
 }
 
-bool OBD2_CanBus::isInArray(const byte *dataArray, int length, byte value) {
+bool OBD2_CanBus::isInArray(const uint8_t *dataArray, uint8_t length, uint8_t value) {
   for (int i = 0; i < length; i++) {
     if (dataArray[i] == value) {
       return true;
@@ -630,10 +673,10 @@ bool OBD2_CanBus::isInArray(const byte *dataArray, int length, byte value) {
   return false;
 }
 
-// String OBD2_CanBus::convertHexToAscii(const byte *dataArray, int length) {
+// String OBD2_CanBus::convertHexToAscii(const uint8_t *dataArray, int length) {
 //   String asciiString = "";
 //   for (int i = 0; i < length; i++) {
-//     byte b = dataArray[i];
+//     uint8_t b = dataArray[i];
 //     if (b >= 0x20 && b <= 0x7E) {  // Printable ASCII range
 //       asciiString += (char)b;
 //     }
@@ -641,7 +684,7 @@ bool OBD2_CanBus::isInArray(const byte *dataArray, int length, byte value) {
 //   return asciiString;
 // }
 
-// String OBD2_CanBus::convertBytesToHexString(const byte *dataArray, int length) {
+// String OBD2_CanBus::convertBytesToHexString(const uint8_t *dataArray, int length) {
 //   String hexString = "";
 //   for (int i = 0; i < length; i++) {
 //     if (dataArray[i] < 0x10) hexString += "0";  // Pad leading zero
@@ -659,6 +702,8 @@ void OBD2_CanBus::updateConnectionStatus(bool messageReceived) {
     //   debugPrintln(F("✅ Connection established."));
     // }
   } else {
+    if (!connectionStatus) return;  // No need to update if not connected
+    
     errors++;
     debugPrint(F("⚠️ Not received data, error count: "));
     debugPrintln(String(errors).c_str());
