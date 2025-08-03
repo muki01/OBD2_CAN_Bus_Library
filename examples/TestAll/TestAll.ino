@@ -19,9 +19,8 @@ void setup() {
   Serial.println("OBD2 CanBus Get Supported PIDs Example");
 
   CanBus.setDebug(Serial);          // Enable debug messages on the Serial monitor
-  CanBus.setProtocol("Automatic");  // Default porotocol Automatic
-  //CanBus.setWriteDelay(5);
-  //CanBus.setDataRequestInterval(60);
+  CanBus.setProtocol("Automatic");  // Default protocol Automatic
+  CanBus.setReadTimeout(200);       // Set read timeout to 200 ms
 
   Serial.println("OBD2 Starting.");
 }

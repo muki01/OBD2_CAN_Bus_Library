@@ -8,8 +8,7 @@ void setup() {
 
   CanBus.setDebug(Serial);          // Enable debug messages on the Serial monitor
   CanBus.setProtocol("Automatic");  // Default protocol Automatic
-  //CanBus.setWriteDelay(5);
-  //CanBus.setDataRequestInterval(60);
+  CanBus.setReadTimeout(200);       // Set read timeout to 200 ms
 
   Serial.println("OBD2 Starting.");
 }
