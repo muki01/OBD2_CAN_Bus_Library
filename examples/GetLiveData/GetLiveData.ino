@@ -1,6 +1,6 @@
 #include "OBD2_CanBus.h"  // Include the library for OBD2 CanBus communication
 
-OBD2_CanBus CanBus(12, 13);  //RX, TX
+OBD2_CanBus CanBus(12, 13);  // RX, TX
 
 void setup() {
   Serial.begin(1000000);  // Start the default serial (for logging/debugging)
@@ -8,8 +8,7 @@ void setup() {
 
   CanBus.setDebug(Serial);          // Enable debug messages on the Serial monitor
   CanBus.setProtocol("Automatic");  // Default protocol Automatic
-  //CanBus.setWriteDelay(5);
-  //CanBus.setDataRequestInterval(60);
+  CanBus.setReadTimeout(200);       // Set read timeout to 200 ms
 
   Serial.println("OBD2 Starting.");
 }
