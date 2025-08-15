@@ -90,3 +90,15 @@ Each protocol has its own timing characteristics, which affect how many response
 <img src="https://github.com/muki01/OBD2_CAN_Bus_Library/blob/main/images/TJA1050%20Schematic.png" width=70%>
 
 ---
+
+## ☕ Support My Work
+
+If you enjoy my projects and want to support me, you can do so through the links below:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/muki01)
+[![PayPal](https://img.shields.io/badge/-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=SAAH5GHAH6T72)
+[![GitHub Sponsors](https://img.shields.io/badge/-Sponsor%20Me%20on%20GitHub-181717?style=for-the-badge&logo=github)](https://github.com/sponsors/muki01)
+
+📧 **Contact:** `muksin.muksin04@gmail.com`
+
+---
