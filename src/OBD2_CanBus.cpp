@@ -704,6 +704,9 @@ void OBD2_CanBus::setReadTimeout(uint16_t timeoutMs) {
 
 void OBD2_CanBus::setProtocol(const String &protocolName) {
   selectedProtocol = protocolName;
+  connectionStatus = false;  // Reset connection status
+  connectedProtocol = "";    // Reset connected protocol
+  stopTWAI();
   debugPrintln(("Protocol set to: " + selectedProtocol).c_str());
 }
 
