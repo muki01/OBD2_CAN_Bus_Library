@@ -272,15 +272,10 @@ float OBD2_CanBus::getFreezeFrame(uint8_t pid) {
 
 float OBD2_CanBus::getPID(uint8_t mode, uint8_t pid) {
   writeData(mode, pid);
-
   int len = readData();
-  if (len <= 0) {
-    return -1;  // Data not received
-  }
 
-  if (resultBuffer.data[2] != pid) {
-    return -2;  // Unexpected PID
-  }
+  if (len <= 0) return -1;                     // Data not received
+  if (resultBuffer.data[2] != pid) return -2;  // Unexpected PID
 
   uint8_t A = 0, B = 0, C = 0, D = 0;
 

@@ -76,8 +76,6 @@ class OBD2_CanBus {
   uint8_t readSupportedData(uint8_t mode);
   uint8_t getSupportedData(uint8_t mode, uint8_t index);
 
-  // void setWriteDelay(uint16_t delay);
-  // void setDataRequestInterval(uint16_t interval);
   void setProtocol(const String &protocolName);
 
   void updateConnectionStatus(bool messageReceived);
@@ -94,7 +92,7 @@ class OBD2_CanBus {
 
   String selectedProtocol = "Automatic";
   String connectedProtocol = "";
-  uint8_t CAN_BIT = 11;  // 11-bit veya 29-bit için
+  uint8_t CAN_BIT = 11;  // 11-bit or 29-bit
   twai_timing_config_t CAN_SPEED = TWAI_TIMING_CONFIG_250KBITS();
   uint16_t _readTimeout = 200;
   String storedDTCBuffer[32];
