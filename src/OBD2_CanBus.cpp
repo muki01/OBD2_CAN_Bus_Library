@@ -460,9 +460,9 @@ uint8_t OBD2_CanBus::readPendingDTCs() {
 }
 
 uint8_t OBD2_CanBus::readDTCs(uint8_t mode) {
-  // Request: C2 33 F1 03 F3
-  // example Response: 87 F1 11 43 01 70 01 34 00 00 72
-  // example Response: 87 F1 11 43 00 00 72
+  // Request:  03
+  // example Response: 07 43 01 70 01 34 00 00
+  // example Response: 03 43 00 00
   int dtcCount = 0;
   String *targetArray = nullptr;
 
@@ -479,8 +479,8 @@ uint8_t OBD2_CanBus::readDTCs(uint8_t mode) {
   int len = readData();
   if (len >= 3) {
     for (int i = 0; i < len; i += 2) {
-      uint8_t b1 = resultBuffer.data[3 + i * 2];
-      uint8_t b2 = resultBuffer.data[3 + i * 2 + 1];
+      uint8_t b1 = resultBuffer.data[2 + i * 2];
+      uint8_t b2 = resultBuffer.data[2 + i * 2 + 1];
 
       if (b1 == 0 && b2 == 0) break;
 
