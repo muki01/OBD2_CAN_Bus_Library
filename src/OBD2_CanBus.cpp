@@ -599,59 +599,40 @@ uint8_t OBD2_CanBus::readSupportedData(uint8_t mode) {
   int arraySize = 32;  // Size of supported data arrays
   uint8_t *targetArray = nullptr;
 
-  if (mode == read_LiveData) {
+  if (mode == read_LiveData) {  // Mode 01
     startByte = 3;
     targetArray = supportedLiveData;
-  } else if (mode == read_FreezeFrame) {
+  } else if (mode == read_FreezeFrame) {  // Mode 02
     startByte = 4;
     targetArray = supportedFreezeFrame;
-  } else if (mode == read_VehicleInfo) {
+  } else if (mode == test_OxygenSensors) {  // Mode 05
     startByte = 4;
+    targetArray = supportedOxygenSensor;
+  } else if (mode == test_OtherComponents) {  // Mode 06
+    startByte = 3;
+    targetArray = supportedOtherComponents;
+  } else if (mode == control_OnBoardComponents) {  // Mode 08
+    startByte = 3;
+    targetArray = supportedControlComponents;
+  } else if (mode == read_VehicleInfo) {  // Mode 09
+    startByte = 3;
     targetArray = supportedVehicleInfo;
-  } else if (mode == component_Monitoring) {
-    startByte = 4;
-    targetArray = supportedComponentMonitoring;
   } else {
     return -1;  // Invalid mode
   }
 
-  writeData(mode, SUPPORTED_PIDS_1_20);
-  if (readData()) {
-    for (int i = 0; i < 4; i++) {
-      uint8_t value = resultBuffer.data[i + startByte];
-      for (int bit = 7; bit >= 0; bit--) {
-        if ((value >> bit) & 1) {
-          targetArray[supportedCount++] = pidIndex + 1;
-        }
-        pidIndex++;
-      }
-    }
-  }
+  uint8_t pidCmds[] = {SUPPORTED_PIDS_1_20, SUPPORTED_PIDS_21_40, SUPPORTED_PIDS_41_60, SUPPORTED_PIDS_61_80, SUPPORTED_PIDS_81_100};
 
-  if (isInArray(targetArray, arraySize, 0x20)) {
-    writeData(mode, SUPPORTED_PIDS_21_40);
-    if (readData()) {
-      for (int i = 0; i < 4; i++) {
-        uint8_t value = resultBuffer.data[i + startByte];
-        for (int bit = 7; bit >= 0; bit--) {
-          if ((value >> bit) & 1) {
-            targetArray[supportedCount++] = pidIndex + 1;
-          }
-          pidIndex++;
-        }
-      }
-    }
-  }
+  for (int n = 0; n < 5; n++) {
+    // Group 0 is always processed, others must be checked
+    if (n != 0 && !isInArray(targetArray, 32, pidCmds[n])) break;
 
-  if (isInArray(targetArray, arraySize, 0x40)) {
-    writeData(mode, SUPPORTED_PIDS_41_60);
-    if (readData()) {
+    writeData(mode, pidCmds[n]);
+    if (readData() && resultBuffer[1] == 0x40 + mode) {
       for (int i = 0; i < 4; i++) {
-        uint8_t value = resultBuffer.data[i + startByte];
+        uint8_t value = resultBuffer[i + startByte];
         for (int bit = 7; bit >= 0; bit--) {
-          if ((value >> bit) & 1) {
-            targetArray[supportedCount++] = pidIndex + 1;
-          }
+          if ((value >> bit) & 1) targetArray[supportedCount++] = pidIndex + 1;
           pidIndex++;
         }
       }
