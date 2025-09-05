@@ -512,57 +512,59 @@ bool OBD2_CanBus::clearDTC() {
   return false;
 }
 
-// String OBD2_CanBus::getVehicleInfo(uint8_t pid) {
-//   // Request: C2 33 F1 09 02 F1
-//   // example Response: 87 F1 11 49 02 01 00 00 00 31 06
-//   //                   87 F1 11 49 02 02 41 31 4A 43 D5
-//   //                   87 F1 11 49 02 03 35 34 34 34 A8
-//   //                   87 F1 11 49 02 04 52 37 32 35 C8
-//   //                   87 F1 11 49 02 05 32 33 36 37 E6
+// ----------------------------------- Vehicle Information -----------------------------------
 
-//   uint8_t dataArray[64];
-//   int messageCount;
-//   int arrayNum = 0;
+String OBD2_CanBus::getVehicleInfo(uint8_t pid) {          //Not Tested
+  // Request: 09 02
+  // example Response: 07 49 02 01 00 00 00 31
+  //                   07 49 02 02 41 31 4A 43
+  //                   07 49 02 03 35 34 34 34
+  //                   07 49 02 04 52 37 32 35
+  //                   07 49 02 05 32 33 36 37
 
-//   if (pid == 0x02) {
-//     messageCount = 5;
-//   } else if (pid == 0x04 || pid == 0x06) {
-//     if (pid == 0x04) {
-//       writeData(read_VehicleInfo, read_ID_Length);
-//     } else if (pid == 0x06) {
-//       writeData(read_VehicleInfo, read_ID_Num_Length);
-//     } else {
-//       return "";
-//     }
+  uint8_t dataArray[64];
+  int messageCount;
+  int arrayNum = 0;
 
-//     if (readData()) {
-//       messageCount = resultBuffer[5];
-//     } else {
-//       return "";
-//     }
-//   }
+  if (pid == 0x02) {
+    messageCount = 5;
+  } else if (pid == 0x04 || pid == 0x06) {
+    if (pid == 0x04) {
+      writeData(read_VehicleInfo, read_ID_Length);
+    } else if (pid == 0x06) {
+      writeData(read_VehicleInfo, read_ID_Num_Length);
+    } else {
+      return "";
+    }
 
-//   writeData(read_VehicleInfo, pid);
+    if (readData()) {
+      messageCount = resultBuffer[3];
+    } else {
+      return "";
+    }
+  }
 
-//   if (readData()) {
-//     for (int j = 0; j < messageCount; j++) {
-//       if (pid == 0x02 && j == 0) {
-//         dataArray[arrayNum++] = resultBuffer[9];
-//         continue;
-//       }
-//       for (int i = 1; i <= 4; i++) {
-//         dataArray[arrayNum++] = resultBuffer[i + 5 + j * 11];
-//       }
-//     }
-//   }
+  writeData(read_VehicleInfo, pid);
 
-//   if (pid == 0x02 || pid == 0x04) {
-//     return convertHexToAscii(dataArray, arrayNum);
-//   } else if (pid == 0x06) {
-//     return convertBytesToHexString(dataArray, arrayNum);
-//   }
-//   return "";
-// }
+  if (readData()) {
+    for (int j = 0; j < messageCount; j++) {
+      if (pid == 0x02 && j == 0) {
+        dataArray[arrayNum++] = resultBuffer[7];
+        continue;
+      }
+      for (int i = 1; i <= 4; i++) {
+        dataArray[arrayNum++] = resultBuffer[i + 3 + j * 8];
+      }
+    }
+  }
+
+  if (pid == 0x02 || pid == 0x04) {
+    return convertHexToAscii(dataArray, arrayNum);
+  } else if (pid == 0x06) {
+    return convertBytesToHexString(dataArray, arrayNum);
+  }
+  return "";
+}
 
 // ----------------------------------- Supported PIDs -----------------------------------
 
@@ -728,26 +730,26 @@ bool OBD2_CanBus::isInArray(const uint8_t *dataArray, uint8_t length, uint8_t va
   return false;
 }
 
-// String OBD2_CanBus::convertHexToAscii(const uint8_t *dataArray, int length) {
-//   String asciiString = "";
-//   for (int i = 0; i < length; i++) {
-//     uint8_t b = dataArray[i];
-//     if (b >= 0x20 && b <= 0x7E) {  // Printable ASCII range
-//       asciiString += (char)b;
-//     }
-//   }
-//   return asciiString;
-// }
+String OBD2_CanBus::convertHexToAscii(const uint8_t *dataArray, int length) {
+  String asciiString = "";
+  for (int i = 0; i < length; i++) {
+    uint8_t b = dataArray[i];
+    if (b >= 0x20 && b <= 0x7E) {  // Printable ASCII range
+      asciiString += (char)b;
+    }
+  }
+  return asciiString;
+}
 
-// String OBD2_CanBus::convertBytesToHexString(const uint8_t *dataArray, int length) {
-//   String hexString = "";
-//   for (int i = 0; i < length; i++) {
-//     if (dataArray[i] < 0x10) hexString += "0";  // Pad leading zero
-//     hexString += String(dataArray[i], HEX);
-//   }
-//   hexString.toUpperCase();
-//   return hexString;
-// }
+String OBD2_CanBus::convertBytesToHexString(const uint8_t *dataArray, int length) {
+  String hexString = "";
+  for (int i = 0; i < length; i++) {
+    if (dataArray[i] < 0x10) hexString += "0";  // Pad leading zero
+    hexString += String(dataArray[i], HEX);
+  }
+  hexString.toUpperCase();
+  return hexString;
+}
 
 // ----------------------------------- Debug Functions -----------------------------------
 
