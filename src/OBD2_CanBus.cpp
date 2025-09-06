@@ -753,17 +753,7 @@ void OBD2_CanBus::debugPrintln(const __FlashStringHelper *msg) {
 }
 
 void OBD2_CanBus::debugPrintHex(uint32_t val) {
-  if (!_debugSerial) return;
-
-  String hexStr = String(val, HEX);
-  hexStr.toUpperCase();
-
-  // If the hex string is a single character, pad with a leading zero
-  if (hexStr.length() == 1) {
-    hexStr = "0" + hexStr;
-  }
-
-  _debugSerial->print(hexStr.c_str());
+  if (_debugSerial) _debugSerial->printf("%02lX", val);
 }
 
 void OBD2_CanBus::debugPrintHexln(uint32_t val) {
