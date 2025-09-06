@@ -95,10 +95,7 @@ bool OBD2_CanBus::writeRawData(canMessage msg) {
   message.rtr = msg.rtr;
   message.extd = msg.ide;
   message.data_length_code = msg.length;
-
-  for (int i = 0; i < msg.length; i++) {
-    message.data[i] = msg.data[i];
-  }
+  memcpy(message.data, msg.data, msg.length);
 
   debugPrint(F("ID: 0x"));
   debugPrintHex(message.identifier);
