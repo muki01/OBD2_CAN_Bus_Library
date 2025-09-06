@@ -67,11 +67,13 @@ class OBD2_CanBus {
 
   bool clearDTC();
 
-  // String getVehicleInfo(uint8_t pid);
+  String getVehicleInfo(uint8_t pid);
 
   uint8_t readSupportedLiveData();
   uint8_t readSupportedFreezeFrame();
-  uint8_t readSupportedComponentMonitoring();
+  uint8_t readSupportedOxygenSensors();
+  uint8_t readSupportedOtherComponents();
+  uint8_t readSupportedOnBoardComponents();
   uint8_t readSupportedVehicleInfo();
   uint8_t readSupportedData(uint8_t mode);
   uint8_t getSupportedData(uint8_t mode, uint8_t index);
@@ -107,8 +109,8 @@ class OBD2_CanBus {
 
   String decodeDTC(uint8_t input_byte1, uint8_t input_byte2);
   bool isInArray(const uint8_t *dataArray, uint8_t length, uint8_t value);
-  // String convertBytesToHexString(const uint8_t *dataArray, int length);
-  // String convertHexToAscii(const uint8_t *dataArray, int length);
+  String convertBytesToHexString(const uint8_t *dataArray, int length);
+  String convertHexToAscii(const uint8_t *dataArray, int length);
   void debugPrint(const char *msg);
   void debugPrint(const __FlashStringHelper *msg);
   void debugPrintln(const char *msg);

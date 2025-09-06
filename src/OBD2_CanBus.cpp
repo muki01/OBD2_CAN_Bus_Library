@@ -130,7 +130,7 @@ bool OBD2_CanBus::writeData(uint8_t mode, uint8_t pid) {
 
   if (mode == read_storedDTCs || mode == read_pendingDTCs || mode == clear_DTCs) {
     quearyLength = 0x01;
-  } else if (mode == read_FreezeFrame) {
+  } else if (mode == read_FreezeFrame || mode == test_OxygenSensors) {
     quearyLength = 0x03;
   } else {
     quearyLength = 0x02;
@@ -533,7 +533,7 @@ String OBD2_CanBus::getVehicleInfo(uint8_t pid) {          //Not Tested
     }
 
     if (readData()) {
-      messageCount = resultBuffer[3];
+      messageCount = resultBuffer.data[3];
     } else {
       return "";
     }
@@ -544,11 +544,11 @@ String OBD2_CanBus::getVehicleInfo(uint8_t pid) {          //Not Tested
   if (readData()) {
     for (int j = 0; j < messageCount; j++) {
       if (pid == 0x02 && j == 0) {
-        dataArray[arrayNum++] = resultBuffer[7];
+        dataArray[arrayNum++] = resultBuffer.data[7];
         continue;
       }
       for (int i = 1; i <= 4; i++) {
-        dataArray[arrayNum++] = resultBuffer[i + 3 + j * 8];
+        dataArray[arrayNum++] = resultBuffer.data[i + 3 + j * 8];
       }
     }
   }
@@ -623,9 +623,9 @@ uint8_t OBD2_CanBus::readSupportedData(uint8_t mode) {
     if (n != 0 && !isInArray(targetArray, 32, pidCmds[n])) break;
 
     writeData(mode, pidCmds[n]);
-    if (readData() && resultBuffer[1] == 0x40 + mode) {
+    if (readData() && resultBuffer.data[1] == 0x40 + mode) {
       for (int i = 0; i < 4; i++) {
-        uint8_t value = resultBuffer[i + startByte];
+        uint8_t value = resultBuffer.data[i + startByte];
         for (int bit = 7; bit >= 0; bit--) {
           if ((value >> bit) & 1) targetArray[supportedCount++] = pidIndex + 1;
           pidIndex++;
@@ -643,7 +643,7 @@ uint8_t OBD2_CanBus::getSupportedData(uint8_t mode, uint8_t index) {
   } else if (mode == 0x02) {
     if (index >= 0) return supportedFreezeFrame[index];
   } else if (mode == 0x06) {
-    if (index >= 0) return supportedComponentMonitoring[index];
+    if (index >= 0) return supportedOtherComponents[index];
   } else if (mode == 0x09) {
     if (index >= 0) return supportedVehicleInfo[index];
   }
