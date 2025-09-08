@@ -6,14 +6,15 @@ void setup() {
   Serial.begin(1000000);  // Start the default serial (for logging/debugging)
   Serial.println("OBD2 CanBus Get Vehicle Info Example");
 
-  CanBus.setDebug(Serial);          // Enable debug messages on the Serial monitor
-  CanBus.setProtocol("Automatic");  // Default protocol Automatic
-  CanBus.setReadTimeout(200);       // Set read timeout to 200 ms
+  CanBus.setDebug(Serial);          // Optional: outputs debug messages to the selected serial port
+  CanBus.setProtocol("Automatic");  // Optional: communication protocol (default: Automatic; supported: 11b250. 11b500, 29b250, 29b500)
+  CanBus.setReadTimeout(200);       // Optional: maximum time (ms) to wait for a response after sending a request
 
   Serial.println("OBD2 Starting.");
 }
 
 void loop() {
+  // Attempt to initialize OBD2 communication
   if (CanBus.initOBD2()) {
     String VIN = CanBus.getVehicleInfo(0x02);
     Serial.print("VIN: "), Serial.println(VIN);
