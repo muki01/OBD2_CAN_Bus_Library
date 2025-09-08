@@ -79,7 +79,7 @@ Each protocol has its own timing characteristics, which affect how many response
 | Protocol     | Average Responses per Second |
 |--------------|-------------------------------|
 | 250KBPS      |  Not Tested                   |
-| 500KBPS      | ~100 responses/sec            |
+| 500KBPS      |  Over 100 responses/sec       |
 
 > 🔎 Note: Tese values represent average conditions based on real-world testing. The actual throughput can vary depending on the ECU’s internal processing time, the specific data being requested (e.g. PID type), and system latency.
 
