@@ -217,44 +217,12 @@ uint8_t OBD2_CanBus::readData() {
   return 0;
 }
 
-bool OBD2_CanBus::readAndCompareData(const canMessage &target) {
-  // debugPrintln(F("Reading All..."));
-  twai_message_t response;
-  unsigned long start_time = millis();
+bool OBD2_CanBus::compareData(canMessage msg) {
+  if (msg.id != resultBuffer.identifier) return false;                     // ID Control
+  if (msg.length != resultBuffer.data_length_code) return false;           // Data length control
+  if (memcmp(msg.data, resultBuffer.data, msg.length) != 0) return false;  // Data Control
 
-  while (millis() - start_time < _readTimeout) {
-    if (twai_receive(&response, pdMS_TO_TICKS(_readTimeout)) == ESP_OK) {
-      debugPrint(F("Received Data: ID: 0x"));
-      debugPrintHex(response.identifier);
-      debugPrint(F(", Data: "));
-      for (int i = 0; i < response.data_length_code; i++) {
-        debugPrintHex(response.data[i]);
-        debugPrint(F(" "));
-      }
-      debugPrintln(F(""));
-
-      if (response.identifier == target.id && response.rtr == target.rtr && response.extd == target.ide &&
-          response.data_length_code == target.length) {
-        bool match = true;
-        for (int i = 0; i < target.length; i++) {
-          if (response.data[i] != target.data[i]) {
-            match = false;
-            break;
-          }
-        }
-        if (match) {
-          debugPrintln(F("✅ Matching message found."));
-          return true;
-        }
-      }
-
-    } else {
-      debugPrintln(F("❌ Not Received any Message!"));
-    }
-  }
-
-  debugPrintln(F("⛔ Message did not match, timeout."));
-  return false;
+  return true;
 }
 
 // ----------------------------------- Live Data -----------------------------------

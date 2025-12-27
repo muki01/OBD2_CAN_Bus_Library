@@ -53,7 +53,7 @@ class OBD2_CanBus {
   bool writeData(uint8_t mode, uint8_t pid);
   bool writeRawData(canMessage msg);
   uint8_t readData();
-  bool readAndCompareData(const canMessage &target);
+  bool compareData(canMessage msg);
 
   float getPID(uint8_t mode, uint8_t pid);
   float getLiveData(uint8_t pid);
