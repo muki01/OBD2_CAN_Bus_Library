@@ -1,6 +1,8 @@
 name: Arduino Examples CI
 
 on:
+  workflow_dispatch:
+  
   push:
     paths:
       - 'src/**'
