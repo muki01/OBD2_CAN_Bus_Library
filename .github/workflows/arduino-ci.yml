@@ -1,0 +1,60 @@
+name: Arduino Examples CI
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'examples/**'
+      - '!**.md'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'examples/**'
+      - '!**.md'
+
+jobs:
+  compile-examples:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Configure ESP32 Board Manager
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls \
+            https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+      - name: Install ESP32 Platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+
+      - name: Compile Library Examples (ESP32)
+        run: |
+          # Setup local library link
+          mkdir -p $HOME/Arduino/libraries
+          ln -s $GITHUB_WORKSPACE $HOME/Arduino/libraries/OBD2_KLine
+
+          # Find and compile each .ino file
+          find examples -name "*.ino" -print0 | while IFS= read -r -d '' ino_file; do
+            sketch_dir=$(dirname "$ino_file")
+            echo "------------------------------------------------"
+            echo "Processing: $sketch_dir"
+            echo "Board: ESP32 Dev Module"
+            arduino-cli compile \
+              --fqbn esp32:esp32:esp32 \
+              --library . \
+              "$sketch_dir"
+            if [ $? -ne 0 ]; then
+              echo "Compilation failed for $sketch_dir"
+              exit 1
+            fi
+          done
+
+      - name: Summary
+        run: echo "All examples compiled successfully for ESP32."
