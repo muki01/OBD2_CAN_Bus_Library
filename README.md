@@ -5,6 +5,8 @@
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub License](https://img.shields.io/github/license/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library)
+[![PlatformIO Registry](https://badges.registry.platformio.org/packages/muki01/library/OBD2%20CanBus.svg)](https://registry.platformio.org/libraries/muki01/OBD2%20CanBus)
+[![Arduino IDE Library Manager](https://www.ardu-badge.com/badge/OBD2%20CanBus.svg)](https://www.ardu-badge.com/OBD2%20CanBus)
 
 **OBD2_CanBus** is a lightweight yet powerful ESP32 compatible library that enables direct communication with vehicles using the **Can Bus**.
 
