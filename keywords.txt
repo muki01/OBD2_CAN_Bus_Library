@@ -1,0 +1,110 @@
+###########################################
+# Syntax Coloring Map For OBD2_CanBus
+###########################################
+
+###########################################
+# Datatypes (KEYWORD1)
+###########################################
+
+OBD2_CanBus	KEYWORD1
+OBD2_Standard	KEYWORD1
+CanBus_Protocol	KEYWORD1
+CanBus_Core	KEYWORD1
+OBD2CanProtocolConfig	KEYWORD1
+OBD2CanProtocol	KEYWORD1
+OBD2CanIdLength	KEYWORD1
+OBD2CanBitrate	KEYWORD1
+canMessage	KEYWORD1
+
+###########################################
+# Methods and Functions (KEYWORD2)
+###########################################
+
+begin	KEYWORD2
+end	KEYWORD2
+isDriverRunning	KEYWORD2
+setPins	KEYWORD2
+setBitrate	KEYWORD2
+setDebug	KEYWORD2
+setReadTimeout	KEYWORD2
+connect	KEYWORD2
+isConnected	KEYWORD2
+setConnectionStatus	KEYWORD2
+updateConnectionStatus	KEYWORD2
+setMaxRetryCount	KEYWORD2
+setProtocol	KEYWORD2
+getProtocolName	KEYWORD2
+getProtocolConfig	KEYWORD2
+getConnectedProtocol	KEYWORD2
+setIdLength	KEYWORD2
+setRequestId	KEYWORD2
+setResponseId	KEYWORD2
+writeData	KEYWORD2
+writeRawData	KEYWORD2
+readData	KEYWORD2
+readMessage	KEYWORD2
+compareData	KEYWORD2
+getResultBuffer	KEYWORD2
+getResultLength	KEYWORD2
+decodeDTC	KEYWORD2
+isInArray	KEYWORD2
+convertBytesToHexString	KEYWORD2
+convertHexToAscii	KEYWORD2
+getPID	KEYWORD2
+getLiveData	KEYWORD2
+getFreezeFrame	KEYWORD2
+readDTCs	KEYWORD2
+readStoredDTCs	KEYWORD2
+readPendingDTCs	KEYWORD2
+getStoredDTC	KEYWORD2
+getPendingDTC	KEYWORD2
+clearDTCs	KEYWORD2
+getVehicleInfo	KEYWORD2
+readSupportedLiveData	KEYWORD2
+readSupportedFreezeFrame	KEYWORD2
+readSupportedOxygenSensors	KEYWORD2
+readSupportedOtherComponents	KEYWORD2
+readSupportedOnBoardComponents	KEYWORD2
+readSupportedVehicleInfo	KEYWORD2
+readSupportedData	KEYWORD2
+getSupportedData	KEYWORD2
+
+###########################################
+# Constants (LITERAL1)
+###########################################
+
+CAN_Automatic	LITERAL1
+CAN_11bit_500k	LITERAL1
+CAN_29bit_500k	LITERAL1
+CAN_11bit_250k	LITERAL1
+CAN_29bit_250k	LITERAL1
+CAN_Custom	LITERAL1
+CAN_None	LITERAL1
+
+CanId_11bit	LITERAL1
+CanId_29bit	LITERAL1
+CanBitrate_250k	LITERAL1
+CanBitrate_500k	LITERAL1
+
+read_LiveData	LITERAL1
+read_FreezeFrame	LITERAL1
+read_storedDTCs	LITERAL1
+clear_DTCs	LITERAL1
+test_OxygenSensors	LITERAL1
+test_OtherComponents	LITERAL1
+read_pendingDTCs	LITERAL1
+control_OnBoardComponents	LITERAL1
+read_VehicleInfo	LITERAL1
+read_PermanentDTCs	LITERAL1
+SUPPORTED_PIDS_1_20	LITERAL1
+SUPPORTED_PIDS_21_40	LITERAL1
+SUPPORTED_PIDS_41_60	LITERAL1
+SUPPORTED_PIDS_61_80	LITERAL1
+SUPPORTED_PIDS_81_100	LITERAL1
+supported_VehicleInfo	LITERAL1
+read_VIN_Count	LITERAL1
+read_VIN	LITERAL1
+read_ID_Length	LITERAL1
+read_ID	LITERAL1
+read_ID_Num_Length	LITERAL1
+read_ID_Num	LITERAL1

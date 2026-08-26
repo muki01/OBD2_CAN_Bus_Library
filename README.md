@@ -1,98 +1,86 @@
-# OBD2 CanBus Library
+<div align="center">
+
+# 🚗 OBD2 CAN Bus Library — ESP32 Arduino Library
+
+**A lightweight yet powerful ESP32 Arduino library for OBD-II diagnostics over the CAN bus (ISO 15765) — automatic protocol detection, live sensor data, DTC read/clear, VIN & vehicle info, and Mode 06 on-board test results.**
 
 ![GitHub forks](https://img.shields.io/github/forks/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub Repo stars](https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub License](https://img.shields.io/github/license/muki01/OBD2_CAN_Bus_Library?style=flat)
 ![GitHub last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library)
-[![PlatformIO Registry](https://badges.registry.platformio.org/packages/muki01/library/OBD2%20CanBus.svg)](https://registry.platformio.org/libraries/muki01/OBD2%20CanBus)
-[![Arduino IDE Library Manager](https://www.ardu-badge.com/badge/OBD2%20CanBus.svg)](https://www.ardu-badge.com/OBD2%20CanBus)
+![ESP32](https://img.shields.io/badge/ESP32-000000?logo=espressif&logoColor=red)
+![Arduino](https://img.shields.io/badge/Arduino-00979D?logo=arduino&logoColor=white)
+![Protocol](https://img.shields.io/badge/Protocol-CAN%20Bus%20(ISO%2015765)-blue)
 
-**OBD2_CanBus** is a lightweight yet powerful ESP32 compatible library that enables direct communication with vehicles using the **Can Bus**.
-
-This library is designed for microcontrollers such as **ESP32**, and similar platforms. It allows your device to communicate directly with a vehicle that uses the **Can Bus**.  
-If you're curious about which types of data are supported, you can find a full list of features below.
-
-You can also see my other car projects:
-1. [Тhis](https://github.com/muki01/I-K_Bus) project is for BMW with I/K bus system. 
-2. [Тhis](https://github.com/muki01/OBD2_CAN_Bus_Reader) project is for Cars with CAN Bus.
-3. [Тhis](https://github.com/muki01/OBD2_K-line_Reader) project is for Cars with ISO9141 and ISO14230 protocols.
-4. [Тhis](https://github.com/muki01/OBD2_CAN_Bus_Library) is my OBD2 CAN Bus Communication Library for Arduino IDE.
-5. [Тhis](https://github.com/muki01/OBD2_KLine_Library) is my OBD2 K-Line Communication Library for Arduino IDE.
-6. [Тhis](https://github.com/muki01/VAG_KW1281) project is for VAG Cars with KW1281 protocol.
-<!--7. [Тhis](https://github.com/muki01/I-K_Bus_Library) is my I/K Bus Communication Library for Arduino IDE.-->
+</div>
 
 ---
 
-## ❓ Does Your Vehicle Support Can Bus?
+## 📌 Overview
 
-Before using this library, it's important to confirm whether your vehicle supports the **Can Bus** protocol.
+**OBD2_CanBus** is a lightweight yet powerful **ESP32-compatible Arduino library** that enables direct **OBD-II communication with vehicles over the CAN bus**. It lets your microcontroller talk straight to the car's ECU to read real-time sensor values, diagnose and clear trouble codes, and pull vehicle information — no ELM327 required. Designed for **ESP32** and similar platforms, it supports both 11-bit and 29-bit identifiers with automatic protocol detection.
 
-Can Bus vehicles typically have **Pin 6 and Pin 14** on the OBD-II connector connected.
-If your vehicle’s OBD-II connector has **Pins 7 connected**, it uses the **K-Line** protocol instead of Can Bus.
+## ❓ Does Your Vehicle Support CAN Bus?
 
-✅ **Pin 6 and 14 (CAN bus)**: Your vehicle uses CAN — this library will work.  
-❌ **Pin 7 (K-Line)**: Your vehicle likely supports ISO 9141 or ISO 14230 (KWP2000) — consider a different library.  
+Before using this library, confirm your car speaks CAN by checking the OBD-II connector pins:
 
+- ✅ **Pins 6 & 14 connected → CAN bus.** This library will work.
+- ❌ **Pin 7 connected → K-Line** (ISO 9141 / ISO 14230 / KWP2000). Use my [OBD2 K-Line Library](https://github.com/muki01/OBD2_KLine_Library) instead.
 
-### Example photos of OBD2 Connector
+**Example OBD-II connectors** (left: K-Line with pin 7 · right: CAN with pins 6 & 14):
+
 <p>
-<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20KLine.jpg" width=40%>
-<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20CanBus.jpg" width=40%>
+<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20KLine.jpg" width="40%">
+<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20CanBus.jpg" width="40%">
 </p>
-
-In the first image, the OBD2 socket includes pin 7, which indicates it operates using the K-Line protocol.
-In the second image, pins 6 and 14 are present, meaning it uses the CAN Bus protocol.
-
----
 
 ## ✨ Features
 
-- Supports **11BIT** and **29BIT**, **250KBPS** and **500KBPS**
-- **Automatic protocol detection**
-- Read real-time sensor values
-- Read and clear **stored and pending DTCs**
-- Retrieve vehicle info (VIN, calibration IDs, etc.)
-- **Mode 06** support (on-board test results)
-- Debug output for easier development
-- Customizable delays and request intervals
-- Works with ESP32 and similar platforms
-
----
+- 🔀 **Automatic protocol detection** — 11-bit & 29-bit, 250 kbps & 500 kbps.
+- 📊 **Live sensor data** — read real-time PIDs (RPM, speed, temperatures, and more).
+- ⚠️ **DTC handling** — read stored & pending trouble codes, and clear them (MIL reset).
+- 🚙 **Vehicle info** — retrieve VIN, calibration IDs and more.
+- 🧪 **Mode 06 support** — on-board monitoring test results.
+- 🐞 **Debug output** — for easy development and troubleshooting.
+- ⏱️ **Customizable timing** — adjustable delays and request intervals.
 
 ## 📡 Supported OBD-II Modes
 
-| Mode | Description                                      |
-|------|--------------------------------------------------|
-| 01   | Read current live data (sensor values)           |
-| 02   | Read freeze frame data                           |
-| 03   | Read stored Diagnostic Trouble Codes (DTCs)      |
-| 04   | Clear DTCs and MIL reset                         |
-| 05   | Oxygen sensor test results                       |
-| 06   | On-board monitoring test results                 |
-| 07   | Read pending Diagnostic Trouble Codes            |
-| 09   | Retrieve vehicle information (VIN, calibration)  |
+| Mode | Description |
+| ---- | ----------- |
+| 01 | Read current live data (sensor values) |
+| 02 | Read freeze-frame data |
+| 03 | Read stored Diagnostic Trouble Codes (DTCs) |
+| 04 | Clear DTCs and reset the MIL |
+| 05 | Oxygen sensor test results |
+| 06 | On-board monitoring test results |
+| 07 | Read pending Diagnostic Trouble Codes |
+| 09 | Retrieve vehicle information (VIN, calibration IDs) |
 
----
+## 📊 Typical Data Rates
 
-### 📊 Typical Data Rates
+Real-world throughput measured with this library:
 
-Each protocol has its own timing characteristics, which affect how many responses you can expect per second when reading data from the ECU. The values below reflect **actual performance measurements** based on this library’s real-world testing.
+| Protocol | Average responses per second |
+| -------- | ---------------------------- |
+| 250 kbps | Not tested |
+| 500 kbps | **Over 100 responses/sec** |
 
-| Protocol     | Average Responses per Second |
-|--------------|-------------------------------|
-| 250KBPS      |  Not Tested                   |
-| 500KBPS      |  Over 100 responses/sec       |
+> 🔎 Actual throughput varies with the ECU's internal processing time, the requested PID type, and overall system latency.
 
-> 🔎 Note: Tese values represent average conditions based on real-world testing. The actual throughput can vary depending on the ECU’s internal processing time, the specific data being requested (e.g. PID type), and system latency.
+## 🛠️ Schematic
 
----
+CAN transceiver wiring (TJA1050):
 
-## 🛠️ Schematics for Communication
+<img src="https://github.com/muki01/OBD2_CAN_Bus_Library/blob/main/images/TJA1050%20Schematic.png" width="70%">
 
-<img src="https://github.com/muki01/OBD2_CAN_Bus_Library/blob/main/images/TJA1050%20Schematic.png" width=70%>
+## 🔗 Related Projects
 
----
+- [OBD2 CAN Bus Reader](https://github.com/muki01/OBD2_CAN_Bus_Reader) — ready-to-use CAN reader firmware
+- [OBD2 K-Line Library](https://github.com/muki01/OBD2_KLine_Library) — for ISO 9141 / ISO 14230 vehicles
+- [OBD2 Diagnostic UI](https://github.com/muki01/OBD2-Diagnostic-UI) — web dashboard front-end
+- [BMW I/K Bus](https://github.com/muki01/I-K_Bus) · [VAG KW1281](https://github.com/muki01/VAG_KW1281)
 
 ## ☕ Support My Work
 
@@ -111,3 +99,9 @@ For information, job offers, collaboration, sponsorship, or purchasing my device
 📧 Email: muksin.muksin04@gmail.com
 
 ---
+
+<div align="center">
+
+Created by [**Muki**](https://github.com/muki01) · If you find this useful, consider giving it a ⭐
+
+</div>
