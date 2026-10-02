@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🚗 K-Line vehicles
+    url: https://github.com/muki01/OBD2_KLine_Library
+    about: Cars with only pin 7 use K-Line. See the OBD2 K-Line Library.
+  - name: 🧰 Ready-to-flash scan tool
+    url: https://github.com/muki01/OBD2_CAN_Bus_Reader
+    about: Looking for finished firmware with a web dashboard? See the OBD2 CAN Bus Reader.
+  - name: 💼 ECU-specific code and custom development
+    url: mailto:muksin.muksin04@gmail.com
+    about: Get in touch by email.

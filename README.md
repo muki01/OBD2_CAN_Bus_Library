@@ -1,107 +1,377 @@
 <div align="center">
 
-# 🚗 OBD2 CAN Bus Library — ESP32 Arduino Library
+<img src="images/obd2-can-bus-library-banner.svg" alt="OBD2 CAN Bus Library — ESP32 Arduino library for OBD-II diagnostics over ISO 15765-4, showing the CAN response frame 7E8 04 41 0C 1A F8 decoded as 1726 rpm" width="100%">
 
-**A lightweight yet powerful ESP32 Arduino library for OBD-II diagnostics over the CAN bus (ISO 15765) — automatic protocol detection, live sensor data, DTC read/clear, VIN & vehicle info, and Mode 06 on-board test results.**
+# OBD2 CAN Bus Library
 
-![GitHub forks](https://img.shields.io/github/forks/muki01/OBD2_CAN_Bus_Library?style=flat)
-![GitHub Repo stars](https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Library?style=flat)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat)
-![GitHub License](https://img.shields.io/github/license/muki01/OBD2_CAN_Bus_Library?style=flat)
-![GitHub last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library)
-![ESP32](https://img.shields.io/badge/ESP32-000000?logo=espressif&logoColor=red)
-![Arduino](https://img.shields.io/badge/Arduino-00979D?logo=arduino&logoColor=white)
-![Protocol](https://img.shields.io/badge/Protocol-CAN%20Bus%20(ISO%2015765)-blue)
+**OBD-II diagnostics over the CAN bus for the ESP32.**<br>
+An Arduino library that talks to a vehicle's ECU over ISO 15765-4 using the ESP32's built-in CAN controller — automatic protocol detection, live sensor data, trouble codes, freeze frame and vehicle information, without an ELM327.
+
+[![Stars](https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Library?style=flat-square&logo=github&color=22d3ee)](https://github.com/muki01/OBD2_CAN_Bus_Library/stargazers)
+[![Forks](https://img.shields.io/github/forks/muki01/OBD2_CAN_Bus_Library?style=flat-square&logo=github&color=38bdf8)](https://github.com/muki01/OBD2_CAN_Bus_Library/forks)
+[![Issues](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat-square)](https://github.com/muki01/OBD2_CAN_Bus_Library/issues)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library?style=flat-square)](https://github.com/muki01/OBD2_CAN_Bus_Library/commits)
+[![Build](https://img.shields.io/github/actions/workflow/status/muki01/OBD2_CAN_Bus_Library/arduino-ci.yml?style=flat-square&label=build)](https://github.com/muki01/OBD2_CAN_Bus_Library/actions/workflows/arduino-ci.yml)
+[![Arduino Library Manager](https://www.ardu-badge.com/badge/OBD2%20CanBus.svg)](https://www.ardu-badge.com/OBD2%20CanBus)
+[![PlatformIO Registry](https://badges.registry.platformio.org/packages/muki01/library/OBD2%20CanBus.svg)](https://registry.platformio.org/libraries/muki01/OBD2%20CanBus)
+![ESP32](https://img.shields.io/badge/ESP32-E7352C?style=flat-square&logo=espressif&logoColor=white)
+
+[Installation](#-installation) ·
+[Quick Start](#-quick-start) ·
+[Protocols](#-supported-protocols) ·
+[API](#-api-reference) ·
+[Wiring](#-wiring) ·
+[Examples](#-examples) ·
+[Upgrading](#-upgrading-from-v1)
 
 </div>
 
 ---
 
-## 📌 Overview
+## 🌟 Overview
 
-**OBD2_CanBus** is a lightweight yet powerful **ESP32-compatible Arduino library** that enables direct **OBD-II communication with vehicles over the CAN bus**. It lets your microcontroller talk straight to the car's ECU to read real-time sensor values, diagnose and clear trouble codes, and pull vehicle information — no ELM327 required. Designed for **ESP32** and similar platforms, it supports both 11-bit and 29-bit identifiers with automatic protocol detection.
+Every car sold in the last two decades carries its diagnostics on the **CAN bus**. **OBD2 CanBus** puts an ESP32 on that bus: it finds the right protocol, sends standard OBD-II requests and returns the answers as ready-to-use values.
 
-## ❓ Does Your Vehicle Support CAN Bus?
+The bus runs on the ESP32's built-in **TWAI** controller, so the only extra part you need is a CAN transceiver.
 
-Before using this library, confirm your car speaks CAN by checking the OBD-II connector pins:
+```mermaid
+flowchart LR
+    ECU["Vehicle ECU"] <-->|"CAN-H / CAN-L<br/>OBD-II pins 6 and 14"| TRX["CAN transceiver<br/>TJA1050 · SN65HVD230"]
+    TRX <-->|"TWAI RX / TX"| LIB["OBD2 CanBus<br/>library"]
+    LIB --> APP["Your sketch"]
+```
 
-- ✅ **Pins 6 & 14 connected → CAN bus.** This library will work.
-- ❌ **Pin 7 connected → K-Line** (ISO 9141 / ISO 14230 / KWP2000). Use my [OBD2 K-Line Library](https://github.com/muki01/OBD2_KLine_Library) instead.
+## ❓ Does Your Vehicle Use CAN?
 
-**Example OBD-II connectors** (left: K-Line with pin 7 · right: CAN with pins 6 & 14):
+Look at the OBD-II connector under the dashboard:
 
-<p>
-<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20KLine.jpg" width="40%">
-<img src="https://github.com/muki01/OBD2_KLine_Library/blob/main/images/OBD2%20CanBus.jpg" width="40%">
-</p>
+- ✅ **Pins 6 and 14 populated → CAN bus.** This library will work.
+- ❌ **Pin 7 populated, no pins 6 and 14 → K-Line** (ISO 9141 / KWP2000). Use the [OBD2 K-Line Library](https://github.com/muki01/OBD2_KLine_Library) instead.
+
+<table>
+  <tr>
+    <td width="50%"><img src="images/OBD2%20CanBus.jpg" alt="OBD-II connector with pins 6 and 14 populated: CAN bus vehicle"></td>
+    <td width="50%"><img src="images/OBD2%20KLine.jpg" alt="OBD-II connector with pin 7 populated: K-Line vehicle"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>CAN bus</b> — pins 6 and 14</td>
+    <td align="center"><b>K-Line</b> — pin 7</td>
+  </tr>
+</table>
 
 ## ✨ Features
 
-- 🔀 **Automatic protocol detection** — 11-bit & 29-bit, 250 kbps & 500 kbps.
-- 📊 **Live sensor data** — read real-time PIDs (RPM, speed, temperatures, and more).
-- ⚠️ **DTC handling** — read stored & pending trouble codes, and clear them (MIL reset).
-- 🚙 **Vehicle info** — retrieve VIN, calibration IDs and more.
-- 🧪 **Mode 06 support** — on-board monitoring test results.
-- 🐞 **Debug output** — for easy development and troubleshooting.
-- ⏱️ **Customizable timing** — adjustable delays and request intervals.
+- 🔀 **Automatic protocol detection** — all four ISO 15765-4 combinations, tried in the order they are most likely to answer.
+- 📊 **Live sensor data** — real-time PIDs converted to engineering units.
+- ⚠️ **Trouble codes** — read stored and pending DTCs as readable codes, and clear them.
+- ❄️ **Freeze frame** — the sensor snapshot stored with a fault.
+- 🚙 **Vehicle information** — VIN and calibration IDs.
+- 🔎 **Supported-PID scan** — ask the ECU what it implements before requesting it.
+- 🎯 **Response masks** — listen to the engine ECU only, or to every module on the bus.
+- 🧱 **Layered and extensible** — diagnostics live in opt-in ECU files, so unused tables never reach your flash.
+- 🐞 **Debug output** — every frame, in both directions, on any `Stream`.
 
-## 📡 Supported OBD-II Modes
+## 📡 Supported Protocols
+
+| Protocol | Identifiers | Bit rate | Request | Response |
+| :-- | :-- | :-- | :-- | :-- |
+| `CAN_11bit_500k` | 11 bit | 500 kbit/s | `7DF` | `7E8` – `7EF` |
+| `CAN_29bit_500k` | 29 bit | 500 kbit/s | `18DB33F1` | `18DAF1xx` |
+| `CAN_11bit_250k` | 11 bit | 250 kbit/s | `7DF` | `7E8` – `7EF` |
+| `CAN_29bit_250k` | 29 bit | 250 kbit/s | `18DB33F1` | `18DAF1xx` |
+| `CAN_Custom` | you choose | you choose | you choose | you choose |
+| `CAN_Automatic` | detected | detected | — | — |
+
+`CAN_Automatic` tries the four standard combinations until one answers. With `CAN_Custom` the sketch sets the identifiers, the response mask and the bit rate itself.
+
+### OBD-II services
 
 | Mode | Description |
-| ---- | ----------- |
-| 01 | Read current live data (sensor values) |
-| 02 | Read freeze-frame data |
-| 03 | Read stored Diagnostic Trouble Codes (DTCs) |
-| 04 | Clear DTCs and reset the MIL |
-| 05 | Oxygen sensor test results |
-| 06 | On-board monitoring test results |
-| 07 | Read pending Diagnostic Trouble Codes |
-| 09 | Retrieve vehicle information (VIN, calibration IDs) |
+| :-- | :-- |
+| `01` | Live data — real-time sensor values |
+| `02` | Freeze frame data |
+| `03` | Stored Diagnostic Trouble Codes (DTCs) |
+| `04` | Clear DTCs and reset the MIL |
+| `05` | Oxygen sensor test results |
+| `06` | On-board monitoring test results |
+| `07` | Pending Diagnostic Trouble Codes |
+| `09` | Vehicle information — VIN, calibration IDs |
+
+## 📦 Installation
+
+**Arduino IDE** — open **Sketch → Include Library → Manage Libraries…**, search for **OBD2 CanBus** and click **Install**.
+
+**PlatformIO** — add it to `platformio.ini`:
+
+```ini
+lib_deps = muki01/OBD2 CanBus
+```
+
+**Manual** — download this repository as a ZIP and add it with **Sketch → Include Library → Add .ZIP Library…**
+
+> The library uses the ESP32 TWAI driver and therefore runs on **ESP32 boards only**.
+
+## 🚀 Quick Start
+
+Read engine speed, coolant temperature and vehicle speed:
+
+```cpp
+#include "OBD2_CanBus.h"         // core: driver + protocol layer
+#include "ecus/OBD2_Standard.h"  // standard OBD2 diagnostics -> OBD2_CanBus
+
+OBD2_CanBus CanBus;
+
+#define CAN_RX_PIN  12
+#define CAN_TX_PIN  13
+
+void setup() {
+  Serial.begin(115200);
+
+  CanBus.setPins(CAN_RX_PIN, CAN_TX_PIN);
+  CanBus.setDebug(Serial);             // View communication logs
+  CanBus.setProtocol(CAN_Automatic);   // or CAN_11bit_500k, CAN_29bit_500k, CAN_11bit_250k, CAN_29bit_250k
+}
+
+void loop() {
+  if (!CanBus.isConnected()) {
+    if (!CanBus.connect()) {
+      delay(2000);
+      return;
+    }
+    Serial.println(CanBus.getProtocolName(CanBus.getConnectedProtocol()));
+  }
+
+  float rpm     = CanBus.getLiveData(0x0C);  // PID 0x0C: Engine RPM
+  float coolant = CanBus.getLiveData(0x05);  // PID 0x05: Coolant Temp
+  float speed   = CanBus.getLiveData(0x0D);  // PID 0x0D: Vehicle Speed
+
+  Serial.print("RPM: ");   Serial.println(rpm);
+  Serial.print("Temp: ");  Serial.print(coolant); Serial.println(" C");
+  Serial.print("Speed: "); Serial.print(speed);   Serial.println(" km/h");
+
+  delay(1000);
+}
+```
+
+### Reading trouble codes
+
+```cpp
+uint8_t storedCount = CanBus.readStoredDTCs();   // Mode 03
+for (uint8_t i = 0; i < storedCount; i++) {
+  Serial.println(CanBus.getStoredDTC(i));        // e.g. P0171
+}
+
+CanBus.clearDTCs();                              // Mode 04
+```
+
+## 📘 API Reference
+
+### Connection
+
+| Method | Description |
+| :-- | :-- |
+| `setPins(rx, tx)` | Select the TWAI RX and TX pins. |
+| `setProtocol(protocol)` | One of the protocols in the table above. |
+| `connect()` | Open the bus and confirm that an ECU answers. |
+| `isConnected()` | Whether the link is still alive. |
+| `getConnectedProtocol()` / `getProtocolName(p)` | The protocol that actually answered. |
+| `setMaxRetryCount(n)` | Unanswered requests before the connection counts as dropped; `0` disables it. |
+| `setReadTimeout(ms)` | Maximum time to wait for a response. |
+| `setDebug(stream)` | Print every frame to any `Stream`. |
+| `begin()` / `end()` | Start or stop the TWAI driver by hand. |
+
+### Standard OBD-II diagnostics
+
+| Method | Description |
+| :-- | :-- |
+| `getLiveData(pid)` | Mode 01 value, converted to engineering units. |
+| `getFreezeFrame(pid)` | Mode 02 value from the stored snapshot. |
+| `readStoredDTCs()` / `getStoredDTC(i)` | Read and retrieve stored trouble codes. |
+| `readPendingDTCs()` / `getPendingDTC(i)` | Read and retrieve pending trouble codes. |
+| `clearDTCs()` | Clear trouble codes and reset the MIL. |
+| `getVehicleInfo(pid)` | VIN (`0x02`), calibration ID (`0x04`), calibration verification number (`0x06`). |
+| `readSupportedLiveData()` / `getSupportedData(mode, i)` | Scan which PIDs the ECU supports. |
+
+### Low-level access
+
+| Method | Description |
+| :-- | :-- |
+| `setIdLength()`, `setRequestId()`, `setResponseId(id, mask)`, `setBitrate()` | Define a custom protocol. |
+| `writeData(mode, pid)` | Build and send an OBD-II query frame. |
+| `writeRawData(message)` | Put a frame on the bus exactly as given. |
+| `readData()` | Read the next frame addressed to the tester. |
+| `readMessage()` | Read any frame, unfiltered. |
+| `getResultBuffer()` / `getResultLength()` | Access the raw response. |
+
+## 🔌 Wiring
+
+The ESP32 has the CAN controller built in; a **CAN transceiver** — TJA1050, SN65HVD230 or similar — sits between it and the vehicle.
+
+<img src="images/TJA1050%20Schematic.png" alt="ESP32 to OBD-II CAN bus wiring schematic with a TJA1050 transceiver" width="75%">
+
+| OBD-II pin | Signal |
+| :-: | :-- |
+| **6** | CAN-H |
+| **14** | CAN-L |
+| **16** | Battery +12 V |
+| **4 / 5** | Ground |
+
+Any free GPIO pair can be used for RX and TX; set them with `setPins()`.
+
+## 🧪 Examples
+
+| Example | What it shows |
+| :-- | :-- |
+| [`Read_Live_Data`](examples/01_Standard_OBD2/Read_Live_Data) | Real-time sensor values (Mode 01) |
+| [`Read_Freeze_Frame`](examples/01_Standard_OBD2/Read_Freeze_Frame) | The snapshot stored with a fault (Mode 02) |
+| [`Read_DTCs`](examples/01_Standard_OBD2/Read_DTCs) | Stored and pending trouble codes (Modes 03 and 07) |
+| [`Clear_DTCs`](examples/01_Standard_OBD2/Clear_DTCs) | Clear trouble codes and reset the MIL (Mode 04) |
+| [`Read_Vehicle_Info`](examples/01_Standard_OBD2/Read_Vehicle_Info) | VIN and calibration IDs (Mode 09) |
+| [`Find_Supported_PIDs`](examples/01_Standard_OBD2/Find_Supported_PIDs) | Which PIDs the ECU implements |
+
+Code for specific ECUs is available on request — see [`examples/02_ECU_Specific`](examples/02_ECU_Specific).
 
 ## 📊 Typical Data Rates
 
-Real-world throughput measured with this library:
+| Bit rate | Average responses per second |
+| :-- | :-- |
+| 500 kbit/s | More than 100 |
+| 250 kbit/s | Not measured |
 
-| Protocol | Average responses per second |
-| -------- | ---------------------------- |
-| 250 kbps | Not tested |
-| 500 kbps | **Over 100 responses/sec** |
+Actual throughput depends on the ECU's processing time and the requested PID.
 
-> 🔎 Actual throughput varies with the ECU's internal processing time, the requested PID type, and overall system latency.
+## 🔄 Upgrading from v1
 
-## 🛠️ Schematic
+Version 2 splits the library into layers and replaces the protocol strings with typed values.
 
-CAN transceiver wiring (TJA1050):
+| v1 | v2 |
+| :-- | :-- |
+| `#include "OBD2_CanBus.h"` | also add `#include "ecus/OBD2_Standard.h"` |
+| `CanBus.initOBD2()` | `CanBus.connect()` |
+| `CanBus.setProtocol("Automatic")` | `CanBus.setProtocol(CAN_Automatic)` |
+| `CanBus.setProtocol("11b500")` | `CanBus.setProtocol(CAN_11bit_500k)` |
+| `CanBus.clearDTC()` | `CanBus.clearDTCs()` |
+| `CanBus.initTWAI()` / `stopTWAI()` | `CanBus.begin()` / `end()` |
+| pins only in the constructor | `CanBus.setPins(rx, tx)` — the constructor still works |
 
-<img src="https://github.com/muki01/OBD2_CAN_Bus_Library/blob/main/images/TJA1050%20Schematic.png" width="70%">
+The class name `OBD2_CanBus` is unchanged, so existing variable declarations keep working.
+
+## 🤝 Contributing
+
+Contributions are welcome — bug reports, tested vehicle reports, fixes and documentation improvements. Please read the **[Contributing Guide](CONTRIBUTING.md)** and the **[Code of Conduct](CODE_OF_CONDUCT.md)**.
+
+**Tested it on your car?** Open a [vehicle report](https://github.com/muki01/OBD2_CAN_Bus_Library/issues/new/choose) with the make, model and year. Real-world reports help everyone.
 
 ## 🔗 Related Projects
 
-- [OBD2 CAN Bus Reader](https://github.com/muki01/OBD2_CAN_Bus_Reader) — ready-to-use CAN reader firmware
-- [OBD2 K-Line Library](https://github.com/muki01/OBD2_KLine_Library) — for ISO 9141 / ISO 14230 vehicles
-- [OBD2 Diagnostic UI](https://github.com/muki01/OBD2-Diagnostic-UI) — web dashboard front-end
-- [BMW I/K Bus](https://github.com/muki01/I-K_Bus) · [VAG KW1281](https://github.com/muki01/VAG_KW1281)
+This library is part of a family of open-source automotive projects. They share the same hardware approach, so what you build for one carries over to the others.
 
-## ☕ Support My Work
+<table>
+  <tr>
+    <th colspan="3" align="left">Firmware — flash it and use it</th>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/BMW_IBus_KBus"><b>BMW I-Bus / K-Bus Firmware</b></a></td>
+    <td>Phone control and key-fob light functions for the BMW E46, on the ESP32 and Arduino.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/BMW_IBus_KBus/stargazers"><img src="https://img.shields.io/github/stars/muki01/BMW_IBus_KBus?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of BMW_IBus_KBus"></a></td>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/OBD2_K-line_Reader"><b>OBD2 K-Line Reader</b></a></td>
+    <td>Scan tool for K-Line cars (ISO 9141-2, KWP2000) with a web dashboard, for the ESP32, ESP8266 and Arduino.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/OBD2_K-line_Reader/stargazers"><img src="https://img.shields.io/github/stars/muki01/OBD2_K-line_Reader?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of OBD2_K-line_Reader"></a></td>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/OBD2_CAN_Bus_Reader"><b>OBD2 CAN Bus Reader</b></a></td>
+    <td>Scan tool for CAN bus cars (ISO 15765-4) with the same web dashboard, for the ESP32.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/OBD2_CAN_Bus_Reader/stargazers"><img src="https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Reader?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of OBD2_CAN_Bus_Reader"></a></td>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/VAG_KW1281"><b>VAG KW1281</b></a></td>
+    <td>KW1281 diagnostics for VW, Audi, Škoda and SEAT: ECU information, measuring groups and fault codes.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/VAG_KW1281/stargazers"><img src="https://img.shields.io/github/stars/muki01/VAG_KW1281?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of VAG_KW1281"></a></td>
+  </tr>
+  <tr>
+    <th colspan="3" align="left">Libraries — build your own firmware</th>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/BMW_IBus_KBus_Library"><b>BMW IBus KBus Library</b></a></td>
+    <td>Receives, checks and sends BMW I-Bus and K-Bus messages; the library behind the BMW firmware.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/BMW_IBus_KBus_Library/stargazers"><img src="https://img.shields.io/github/stars/muki01/BMW_IBus_KBus_Library?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of BMW_IBus_KBus_Library"></a></td>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/OBD2_KLine_Library"><b>OBD2 K-Line Library</b></a></td>
+    <td>K-Line diagnostics behind one API: ISO 9141-2, KWP2000, KW1281, DS2 and KW82.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/OBD2_KLine_Library/stargazers"><img src="https://img.shields.io/github/stars/muki01/OBD2_KLine_Library?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of OBD2_KLine_Library"></a></td>
+  </tr>
+  <tr>
+    <td width="30%"><b>OBD2 CAN Bus Library</b><br><sub>you are here</sub></td>
+    <td>OBD-II diagnostics over ISO 15765-4 with the ESP32's built-in CAN controller.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/OBD2_CAN_Bus_Library/stargazers"><img src="https://img.shields.io/github/stars/muki01/OBD2_CAN_Bus_Library?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of OBD2_CAN_Bus_Library"></a></td>
+  </tr>
+  <tr>
+    <th colspan="3" align="left">Interface</th>
+  </tr>
+  <tr>
+    <td width="30%"><a href="https://github.com/muki01/OBD2-Diagnostic-UI"><b>OBD2 Diagnostic UI</b></a></td>
+    <td>The web dashboard used by the two OBD2 readers.</td>
+    <td width="96" align="center"><a href="https://github.com/muki01/OBD2-Diagnostic-UI/stargazers"><img src="https://img.shields.io/github/stars/muki01/OBD2-Diagnostic-UI?style=flat-square&label=stars&color=22d3ee" alt="GitHub stars of OBD2-Diagnostic-UI"></a></td>
+  </tr>
+</table>
 
-If you enjoy my projects and want to support me, you can do so through the links below:
+## 💼 Custom Development
 
-[![Buy Me A Coffee](https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/muki01)
-[![PayPal](https://img.shields.io/badge/-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=SAAH5GHAH6T72)
-[![GitHub Sponsors](https://img.shields.io/badge/-Sponsor%20Me%20on%20GitHub-181717?style=for-the-badge&logo=github)](https://github.com/sponsors/muki01)
+I design automotive diagnostic tools, firmware and hardware professionally. Whether you need a complete product or only the communication layer, I can help.
 
----
+| Service | Details |
+| :-- | :-- |
+| **Protocol implementation** | BMW I/K-Bus, K-Line (ISO 9141-2 / KWP2000), CAN / UDS, VAG KW1281 and other manufacturer-specific protocols |
+| **ECU communication & reverse engineering** | Bus sniffing, packet decoding, module control, undocumented ECUs and buses |
+| **ECU security access** | Seed-key algorithms and unlock routines for KWP2000 / UDS |
+| **Embedded firmware** | Arduino, ESP32, ESP8266, STM32, Raspberry Pi Pico |
+| **Custom hardware** | Diagnostic dongles, shields and PCBs designed to your requirements |
+| **Companion apps** | Android, iOS and web apps to visualise, log and control your device |
+
+Have a project in mind? Reach out through the [Contact](#-contact) section below.
 
 ## 📬 Contact
 
-For information, job offers, collaboration, sponsorship, or purchasing my devices, you can contact me via email.
+For ECU-specific code, custom development, collaboration or ready-made devices:
 
-📧 Email: muksin.muksin04@gmail.com
+| Channel | Address |
+| :-- | :-- |
+| 📧 **Email** | [muksin.muksin04@gmail.com](mailto:muksin.muksin04@gmail.com) |
+| 💼 **LinkedIn** | [linkedin.com/in/muksin-muksin](https://www.linkedin.com/in/muksin-muksin/) |
+| 🐙 **GitHub** | [@muki01](https://github.com/muki01) |
+
+## ☕ Support the Project
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/muki01)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=SAAH5GHAH6T72)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-181717?style=for-the-badge&logo=github)](https://github.com/sponsors/muki01)
+
+## ⚠️ Disclaimer
+
+> [!WARNING]
+> Connecting custom hardware to a vehicle carries risk. Use the library at your own risk; the author accepts no responsibility for damage or malfunction.
+
+## 📄 License
+
+Released under the **[GNU General Public License v3.0](LICENSE)**.
+
+- You are free to use, study, modify and share this library.
+- If you distribute it — on its own or as part of a product or firmware — you must make the complete source available under the same license.
+
+**Closed-source or commercial product?** A separate commercial license is available. Get in touch through the [Contact](#-contact) section.
+
+ECU-specific definition files are not part of this repository and are licensed separately.
+
+Copyright © 2025–2026 Muksin Muksin.
 
 ---
 
 <div align="center">
 
-Created by [**Muki**](https://github.com/muki01) · If you find this useful, consider giving it a ⭐
+Created by [**Muki**](https://github.com/muki01) · If this library helped you, please give it a ⭐
 
 </div>
