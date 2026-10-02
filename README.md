@@ -12,7 +12,6 @@ An Arduino library that talks to a vehicle's ECU over ISO 15765-4 using the ESP3
 [![Issues](https://img.shields.io/github/issues/muki01/OBD2_CAN_Bus_Library?style=flat-square)](https://github.com/muki01/OBD2_CAN_Bus_Library/issues)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/muki01/OBD2_CAN_Bus_Library?style=flat-square)](https://github.com/muki01/OBD2_CAN_Bus_Library/commits)
-[![Build](https://img.shields.io/github/actions/workflow/status/muki01/OBD2_CAN_Bus_Library/arduino-ci.yml?style=flat-square&label=build)](https://github.com/muki01/OBD2_CAN_Bus_Library/actions/workflows/arduino-ci.yml)
 [![Arduino Library Manager](https://www.ardu-badge.com/badge/OBD2%20CanBus.svg)](https://www.ardu-badge.com/OBD2%20CanBus)
 [![PlatformIO Registry](https://badges.registry.platformio.org/packages/muki01/library/OBD2%20CanBus.svg)](https://registry.platformio.org/libraries/muki01/OBD2%20CanBus)
 ![ESP32](https://img.shields.io/badge/ESP32-E7352C?style=flat-square&logo=espressif&logoColor=white)
