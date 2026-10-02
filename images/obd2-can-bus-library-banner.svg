@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 440" width="1280" height="440" role="img" aria-labelledby="t d">
+  <title id="t">OBD2 CAN Bus Library - ESP32 Arduino library for OBD-II diagnostics over ISO 15765-4</title>
+  <desc id="d">Banner showing a CAN response frame 7E8 04 41 0C 1A F8 decoded as an engine speed of 1726 rpm, above the CAN-H and CAN-L signal traces.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111a2e"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="72%" cy="40%" r="55%">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="8%" cy="100%" r="55%">
+      <stop offset="0" stop-color="#6366f1" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity=".035"/>
+    </pattern>
+    <clipPath id="card"><rect width="1280" height="440" rx="22"/></clipPath>
+  </defs>
+    <style>
+      .glow{animation:hit 6s linear infinite}
+      .ack{opacity:0;animation:hit 6s linear infinite}.b0 .glow{animation-delay:0s}.a0{animation-delay:0.45s}.b1 .glow{animation-delay:1s}.a1{animation-delay:1.45s}.b2 .glow{animation-delay:2s}.a2{animation-delay:2.45s}.b3 .glow{animation-delay:3s}.a3{animation-delay:3.45s}.b4 .glow{animation-delay:4s}.a4{animation-delay:4.45s}.b5 .glow{animation-delay:5s}.a5{animation-delay:5.45s}
+      .scan{animation:scan 6s linear infinite}
+      .live{animation:blink 1.6s ease-in-out infinite}
+      .pin{animation:blink 1.6s ease-in-out infinite}
+      .wave{animation:wave 3s ease-out infinite}
+      .w2{animation-delay:.18s}.w3{animation-delay:.36s}
+      .flow{animation:flow 1.2s linear infinite}
+      @keyframes hit{0%{opacity:0}0.5%{opacity:1}15.0%{opacity:1}21.7%{opacity:0}100%{opacity:0}}
+      @keyframes scan{from{transform:translateX(0)}to{transform:translateX(468px)}}
+      @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+      @keyframes wave{0%{opacity:0}10%{opacity:1}45%{opacity:1}70%{opacity:0}100%{opacity:0}}
+      @keyframes flow{from{stroke-dashoffset:18}to{stroke-dashoffset:0}}
+      @media (prefers-reduced-motion:reduce){.glow,.ack,.scan,.live,.pin,.wave,.flow{animation:none}.scan{opacity:0}.ack{opacity:1}}
+    </style>
+
+  <g clip-path="url(#card)">
+    <rect width="1280" height="440" fill="url(#bg)"/>
+    <rect width="1280" height="440" fill="url(#grid)"/>
+    <rect width="1280" height="440" fill="url(#glow1)"/>
+    <rect width="1280" height="440" fill="url(#glow2)"/>
+
+    <!-- left column -->
+    <text x="64" y="96" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="13" letter-spacing="2.4" fill="#22d3ee">ESP32 ARDUINO LIBRARY</text>
+    <text x="60" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="76" font-weight="800" letter-spacing="-2"><tspan fill="#f8fafc">OBD2 </tspan><tspan fill="url(#title)">CAN Bus</tspan></text>
+    <text font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="23" fill="#cbd5e1">
+      <tspan x="64" y="228">OBD-II diagnostics over ISO 15765-4 with the</tspan>
+      <tspan x="64" y="259">ESP32's built-in CAN controller.</tspan>
+    </text>
+    <rect x="64" y="286" width="123" height="32" rx="16" fill="#ffffff" fill-opacity=".05" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="125.5" y="307" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="14" fill="#cbd5e1">11 / 29 bit</text>
+    <rect x="197" y="286" width="166" height="32" rx="16" fill="#ffffff" fill-opacity=".05" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="280.0" y="307" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="14" fill="#cbd5e1">250 / 500 kbit/s</text>
+    <rect x="373" y="286" width="123" height="32" rx="16" fill="#ffffff" fill-opacity=".05" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="434.5" y="307" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="14" fill="#cbd5e1">auto-detect</text>
+    <text x="64" y="362" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="2" fill="#64748b">READS</text>
+    <text x="64" y="386" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="15" fill="#94a3b8">Live data · Freeze frame · DTCs · VIN</text>
+
+    <!-- right column -->
+    <rect x="704" y="64" width="512" height="312" rx="18" fill="#0a101c" fill-opacity=".72" stroke="#ffffff" stroke-opacity=".10"/>
+    <circle class="live" cx="730" cy="91" r="5" fill="#34d399"/>
+    <text x="744" y="96" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="13" letter-spacing="1.5" fill="#94a3b8">CAN BUS  LIVE</text>
+    <text x="1194" y="96" text-anchor="end" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="13" fill="#64748b">500 kbit/s</text>
+    <path d="M704 110H1216" stroke="#ffffff" stroke-opacity=".08"/>
+    <path d="M712.0 140 H726.0 H735.2 H744.4 H753.5 H762.7 H771.9 H781.1 V122 H790.2 V140 H799.4 V122 H808.6 H817.8 H826.9 H836.1 H845.3 H854.5 H863.6 H872.8 V140 H882.0 V122 H891.2 H900.4 H909.5 V140 H918.7 V122 H927.9 H937.1 H946.2 H955.4 H964.6 V140 H973.8 V122 H982.9 H992.1 H1001.3 H1010.5 V140 H1019.6 H1028.8 V122 H1038.0 H1047.2 H1056.4 H1065.5 H1074.7 V140 H1083.9 H1093.1 V122 H1102.2 V140 H1111.4 V122 H1120.6 V140 H1129.8 H1138.9 H1148.1 H1157.3 H1166.5 V122 H1175.6 H1184.8 H1194.0 V140 H1208.0" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linejoin="round"/><path d="M712.0 152 H726.0 H735.2 H744.4 H753.5 H762.7 H771.9 H781.1 V170 H790.2 V152 H799.4 V170 H808.6 H817.8 H826.9 H836.1 H845.3 H854.5 H863.6 H872.8 V152 H882.0 V170 H891.2 H900.4 H909.5 V152 H918.7 V170 H927.9 H937.1 H946.2 H955.4 H964.6 V152 H973.8 V170 H982.9 H992.1 H1001.3 H1010.5 V152 H1019.6 H1028.8 V170 H1038.0 H1047.2 H1056.4 H1065.5 H1074.7 V152 H1083.9 H1093.1 V170 H1102.2 V152 H1111.4 V170 H1120.6 V152 H1129.8 H1138.9 H1148.1 H1157.3 H1166.5 V170 H1175.6 H1184.8 H1194.0 V152 H1208.0" fill="none" stroke="#818cf8" stroke-width="2" stroke-linejoin="round"/>
+    <rect class="scan" x="725" y="118" width="2" height="54" fill="#cffafe" opacity=".85"/>
+    <g class="byte b0">
+      <rect x="726.0" y="202" width="68" height="64" rx="10" fill="#22d3ee" fill-opacity=".10" stroke="#22d3ee" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="726.0" y="202" width="68" height="64" rx="10" fill="#22d3ee" fill-opacity=".22" stroke="#22d3ee" stroke-width="2" opacity="0"/>
+      <text x="760.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">7E8</text>
+      <text x="760.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#22d3ee">ID</text>
+    </g>
+    <g class="byte b1">
+      <rect x="806.0" y="202" width="68" height="64" rx="10" fill="#94a3b8" fill-opacity=".10" stroke="#94a3b8" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="806.0" y="202" width="68" height="64" rx="10" fill="#94a3b8" fill-opacity=".22" stroke="#94a3b8" stroke-width="2" opacity="0"/>
+      <text x="840.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">04</text>
+      <text x="840.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#94a3b8">LEN</text>
+    </g>
+    <g class="byte b2">
+      <rect x="886.0" y="202" width="68" height="64" rx="10" fill="#34d399" fill-opacity=".10" stroke="#34d399" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="886.0" y="202" width="68" height="64" rx="10" fill="#34d399" fill-opacity=".22" stroke="#34d399" stroke-width="2" opacity="0"/>
+      <text x="920.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">41</text>
+      <text x="920.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#34d399">MODE</text>
+    </g>
+    <g class="byte b3">
+      <rect x="966.0" y="202" width="68" height="64" rx="10" fill="#818cf8" fill-opacity=".10" stroke="#818cf8" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="966.0" y="202" width="68" height="64" rx="10" fill="#818cf8" fill-opacity=".22" stroke="#818cf8" stroke-width="2" opacity="0"/>
+      <text x="1000.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">0C</text>
+      <text x="1000.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#818cf8">PID</text>
+    </g>
+    <g class="byte b4">
+      <rect x="1046.0" y="202" width="68" height="64" rx="10" fill="#c084fc" fill-opacity=".10" stroke="#c084fc" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="1046.0" y="202" width="68" height="64" rx="10" fill="#c084fc" fill-opacity=".22" stroke="#c084fc" stroke-width="2" opacity="0"/>
+      <text x="1080.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">1A</text>
+      <text x="1080.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#c084fc">A</text>
+    </g>
+    <g class="byte b5">
+      <rect x="1126.0" y="202" width="68" height="64" rx="10" fill="#f472b6" fill-opacity=".10" stroke="#f472b6" stroke-opacity=".55" stroke-width="1.5"/>
+      <rect class="glow" x="1126.0" y="202" width="68" height="64" rx="10" fill="#f472b6" fill-opacity=".22" stroke="#f472b6" stroke-width="2" opacity="0"/>
+      <text x="1160.0" y="244" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="27" font-weight="700" fill="#f8fafc">F8</text>
+      <text x="1160.0" y="290" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="12" letter-spacing="1.5" fill="#f472b6">B</text>
+    </g>
+    <path d="M704 316H1216" stroke="#ffffff" stroke-opacity=".08"/>
+    <text x="726" y="348" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="15" fill="#e2e8f0">Engine RPM <tspan fill="#64748b">·</tspan> <tspan fill="#67e8f9">1726 rpm</tspan></text>
+    <text x="1194" y="348" text-anchor="end" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="13" fill="#34d399">ISO 15765-4</text>
+  </g>
+</svg>
